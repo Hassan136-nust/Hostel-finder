@@ -291,3 +291,43 @@ export const socialAuth = CatchAsyncError(async (req: Request, res: Response, ne
         return next(new ErrorHandler(error.message, 400));
     }
 });
+
+
+interface IUpdateUserInfo{
+    name?:string,
+    phone?:string
+}
+
+export const updateUserInfo = CatchAsyncError(async (req:Request,res:Response,next:NextFunction)=>{
+    try {
+        const {name , phone} = req.body as IUpdateUserInfo;
+        const userId = req.user?._id;
+
+        const user = await userModel.findById(userId)
+
+       
+
+        if(name && user){
+            user.name = name;
+        }
+
+         if(phone && user){
+            user.phone = phone;
+        }
+
+        await user?.save();
+
+    
+
+        await redis.set(String(userId), JSON.stringify(user))
+        
+
+        res.status(201).json({
+            success:true,
+            user
+        })
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 400));
+    }
+})
