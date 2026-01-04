@@ -2,6 +2,7 @@ import express from "express";
 import {
   activateUser,
   deleteUser,
+  getAllHostelRequests,
   getAllUsers,
   getUserInfo,
   loginUser,
@@ -10,6 +11,7 @@ import {
   requestHostelAccess,
   socialAuth,
   updateAccessToken,
+  updateHostelRequestStatus,
   updatePassword,
   updateProfilePicture,
   updateUserInfo,
@@ -46,6 +48,19 @@ userRouter.delete(
   isAuthenticated,
   authorizeRoles("admin"),
   deleteUser
+);
+userRouter.get(
+    '/admin/hostel-requests', 
+    isAuthenticated, 
+    authorizeRoles("admin"), 
+    getAllHostelRequests
+);
+
+userRouter.put(
+    '/admin/update-hostel-request', 
+    isAuthenticated, 
+    authorizeRoles("admin"), 
+    updateHostelRequestStatus
 );
 
 export default userRouter;

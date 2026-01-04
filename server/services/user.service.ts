@@ -31,3 +31,12 @@ export const updateUserRoleService = async(res:Response , id:string , role:strin
             users,
         })
 }
+
+export const getHostelRequestsService = async (res: Response) => {
+    const users = await userModel.find({ hostelRequestStatus: "pending" }).sort({ createdAt: -1 });
+    
+    res.status(200).json({
+        success: true,
+        users,
+    });
+};

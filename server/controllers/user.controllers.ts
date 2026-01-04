@@ -6,7 +6,8 @@ import ErrorHandler from "../utils/ErrorHandler";
 import sendMail from "../utils/sendmail";
 import { accessTokenOptions, refreshTokenOptions, sendToken } from "../utils/jwt";
 import { redis } from "../config/redis";
-import { getAllUsersService, getUserById, updateUserRoleService } from "../services/user.service";
+import { getAllUsersService, getUserById, updateUserRoleService ,getHostelRequestsService} from "../services/user.service";
+
 import {v2 as cloudinary} from 'cloudinary'
 
 interface IRegistrationBody {
@@ -489,6 +490,8 @@ export const requestHostelAccess = CatchAsyncError(async (req: Request, res: Res
 });
 
 
+
+
 export const deleteUser = CatchAsyncError(
     async(req:Request , res:Response, next:NextFunction)=>{
         try {
@@ -516,3 +519,51 @@ export const deleteUser = CatchAsyncError(
 )
 
 
+
+
+
+export const getAllHostelRequests = CatchAsyncError(
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            getHostelRequestsService(res);
+        } catch (error: any) {
+            return next(new ErrorHandler(error.message, 500));
+        }
+    }
+);
+
+export const updateHostelRequestStatus = CatchAsyncError(
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { id, status } = req.body; 
+
+            const user = await userModel.findById(id);
+
+            if (!user) {
+                return next(new ErrorHandler("User not found", 404));
+            }
+
+            if (status === 'approved') {
+                user.role = 'manager'; 
+                user.hostelRequestStatus = 'approved';
+            } else if (status === 'rejected') {
+                user.hostelRequestStatus = 'rejected';
+            } else {
+                return next(new ErrorHandler("Invalid status provided", 400));
+            }
+
+            await user.save();
+            
+            await redis.set(id, JSON.stringify(user));
+
+            res.status(200).json({
+                success: true,
+                message: `Hostel request ${status} successfully`,
+                user
+            });
+
+        } catch (error: any) {
+            return next(new ErrorHandler(error.message, 500));
+        }
+    }
+);
