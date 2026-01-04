@@ -457,6 +457,38 @@ export const updateUserRole = CatchAsyncError(
 )
 
 
+export const requestHostelAccess = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = await userModel.findById(req.user?._id);
+
+        if (!user) {
+            return next(new ErrorHandler("User not found", 404));
+        }
+
+        if (user.role === 'manager') {
+            return next(new ErrorHandler("You are already a Manager", 400));
+        }
+
+        if (user.hostelRequestStatus === 'pending') {
+            return next(new ErrorHandler("Your request is already pending approval", 400));
+        }
+
+        user.hostelRequestStatus = 'pending';
+        
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Hostel creation request sent successfully. Please wait for admin approval.",
+            user
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
+
 export const deleteUser = CatchAsyncError(
     async(req:Request , res:Response, next:NextFunction)=>{
         try {
@@ -482,3 +514,5 @@ export const deleteUser = CatchAsyncError(
         }
     }
 )
+
+
