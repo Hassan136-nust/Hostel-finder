@@ -434,3 +434,13 @@ export const updateProfilePicture = CatchAsyncError(async (req: Request, res: Re
     }
 });
 
+
+export const getAllUsers = CatchAsyncError(
+    async(req:Request , res:Response, next:NextFunction)=>{
+        try {
+            getAllUsersService(res)
+        } catch (error:any) {
+            return next(new ErrorHandler(error.message,500))
+        }
+    }
+)
