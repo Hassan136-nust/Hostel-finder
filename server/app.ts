@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser"
 import { ErrorMiddleware } from './middlewares/ErrorMiddleware';
 import userRouter from './routes/user.route';
 import hostelRouter from './routes/hostel.route';
+import roomRouter from './routes/room.routes';
 export const app = express();
 
 app.use(cookieParser())
@@ -17,6 +18,7 @@ app.use(cors(({
 
 app.use('/api/v1' , userRouter)
 app.use('/api/v1' , hostelRouter)
+app.use('/api/v1' , roomRouter)
 
 app.get('/api' , (req:Request , res:Response , next:NextFunction) =>{
     res.status(200).json({
