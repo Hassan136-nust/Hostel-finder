@@ -444,3 +444,15 @@ export const getAllUsers = CatchAsyncError(
         }
     }
 )
+
+export const updateUserRole = CatchAsyncError(
+    async(req:Request , res:Response, next:NextFunction)=>{
+        try {
+            const {id , role} = req.body
+            updateUserRoleService(res , id , role)
+        } catch (error:any) {
+            return next(new ErrorHandler(error.message,500))
+        }
+    }
+)
+
