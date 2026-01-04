@@ -1,5 +1,5 @@
 import express from 'express'
-import { activateUser,  getUserInfo, loginUser, logoutUser, registrationUser, socialAuth, updateAccessToken, updatePassword, updateProfilePicture, updateUserInfo } from '../controllers/user.controllers'
+import { activateUser, deleteUser, getAllUsers, getUserInfo, loginUser, logoutUser, registrationUser, socialAuth, updateAccessToken, updatePassword, updateProfilePicture, updateUserInfo, updateUserRole } from '../controllers/user.controllers'
 import { authorizeRoles, isAuthenticated } from '../middlewares/auth'
 const userRouter = express.Router()
 
@@ -12,6 +12,10 @@ userRouter.get('/me' , isAuthenticated ,getUserInfo)
 userRouter.post('/social-auth'  ,socialAuth)
 userRouter.put('/update-user-info' ,isAuthenticated ,updateUserInfo)
 userRouter.put('/update-password' ,isAuthenticated ,updatePassword)
+userRouter.put('/update-avatar' ,isAuthenticated ,updateProfilePicture)
+userRouter.get('/all-users' ,isAuthenticated,authorizeRoles("admin"), getAllUsers)
+userRouter.put('/update-user' ,isAuthenticated,authorizeRoles("admin"), updateUserRole)
+userRouter.delete('/delete-user/:id' ,isAuthenticated,authorizeRoles("admin"), deleteUser)
 
 
 export default userRouter
