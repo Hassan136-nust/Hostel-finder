@@ -4,6 +4,7 @@ require("dotenv").config()
 import cookieParser from "cookie-parser"
 import { ErrorMiddleware } from './middlewares/ErrorMiddleware';
 import userRouter from './routes/user.route';
+import hostelRouter from './routes/hostel.route';
 export const app = express();
 
 app.use(cookieParser())
@@ -15,6 +16,7 @@ app.use(cors(({
 
 
 app.use('/api/v1' , userRouter)
+app.use('/api/v1' , hostelRouter)
 
 app.get('/api' , (req:Request , res:Response , next:NextFunction) =>{
     res.status(200).json({
