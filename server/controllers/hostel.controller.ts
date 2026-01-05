@@ -6,6 +6,7 @@ import { v2 as cloudinary } from "cloudinary";
 import "../models/review.model";
 import "../models/question.model";
 
+//createHostel
 export const createHostel = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { name, address, city, description, type, facilities, contactPhone, images } = req.body;
