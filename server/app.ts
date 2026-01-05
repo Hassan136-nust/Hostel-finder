@@ -6,6 +6,7 @@ import { ErrorMiddleware } from './middlewares/ErrorMiddleware';
 import userRouter from './routes/user.route';
 import hostelRouter from './routes/hostel.route';
 import roomRouter from './routes/room.routes';
+import socialRouter from './routes/social.route';
 export const app = express();
 
 app.use(cookieParser())
@@ -19,6 +20,7 @@ app.use(cors(({
 app.use('/api/v1' , userRouter)
 app.use('/api/v1' , hostelRouter)
 app.use('/api/v1' , roomRouter)
+app.use('/api/v1' , socialRouter)
 
 app.get('/api' , (req:Request , res:Response , next:NextFunction) =>{
     res.status(200).json({
