@@ -68,3 +68,60 @@ export const getAllHostels = CatchAsyncError(async (req: Request, res: Response,
         return next(new ErrorHandler(error.message, 500));
     }
 });
+
+
+export const updateHostel = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const { name, address, city, description, type, facilities, contactPhone, images } = req.body;
+
+        const hostel = await hostelModel.findById(id);
+
+        if (!hostel) {
+            return next(new ErrorHandler("Hostel not found", 404));
+        }
+
+        if (hostel.owner.toString() !== req.user?._id.toString() && req.user?.role !== 'admin') {
+            return next(new ErrorHandler("You are not authorized to update this hostel", 403));
+        }
+
+        if (name) hostel.name = name;
+        if (address) hostel.address = address;
+        if (city) hostel.city = city;
+        if (description) hostel.description = description;
+        if (type) hostel.type = type;
+        if (facilities) hostel.facilities = facilities;
+        if (contactPhone) hostel.contactPhone = contactPhone;
+
+        if (images && images.length > 0) {
+            for (const img of hostel.images) {
+                if (img.public_id) {
+                    await cloudinary.uploader.destroy(img.public_id);
+                }
+            }
+
+            const imageLinks = [];
+            for (let i = 0; i < images.length; i++) {
+                const result = await cloudinary.uploader.upload(images[i], {
+                    folder: "hostels",
+                });
+                imageLinks.push({
+                    public_id: result.public_id,
+                    url: result.secure_url,
+                });
+            }
+            hostel.images = imageLinks;
+        }
+
+        await hostel.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Hostel updated successfully",
+            hostel
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
