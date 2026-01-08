@@ -5,8 +5,11 @@ import hostelModel from "../models/hostel.model";
 import { v2 as cloudinary } from "cloudinary";
 import "../models/review.model";
 import "../models/question.model";
+import roomModel from "../models/room.model";
+import reviewModel from "../models/review.model";
+import questionModel from "../models/question.model";
 
-//createHostel
+
 export const createHostel = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { name, address, city, description, type, facilities, contactPhone, images } = req.body;
@@ -119,6 +122,55 @@ export const updateHostel = CatchAsyncError(async (req: Request, res: Response, 
             success: true,
             message: "Hostel updated successfully",
             hostel
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
+export const deleteHostel = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+
+        const hostel = await hostelModel.findById(id);
+
+        if (!hostel) {
+            return next(new ErrorHandler("Hostel not found", 404));
+        }
+
+        if (hostel.owner.toString() !== req.user?._id.toString() && req.user?.role !== 'admin') {
+            return next(new ErrorHandler("You are not authorized to delete this hostel", 403));
+        }
+
+        if (hostel.images && hostel.images.length > 0) {
+            for (const img of hostel.images) {
+                if (img.public_id) {
+                    await cloudinary.uploader.destroy(img.public_id);
+                }
+            }
+        }
+
+        const rooms = await roomModel.find({ hostel: id });
+        for (const room of rooms) {
+            if (room.images && room.images.length > 0) {
+                for (const img of room.images) {
+                    if (img.public_id) {
+                        await cloudinary.uploader.destroy(img.public_id);
+                    }
+                }
+            }
+        }
+
+        await roomModel.deleteMany({ hostel: id });
+        await reviewModel.deleteMany({ hostel: id });
+        await questionModel.deleteMany({ hostel: id });
+
+        await hostel.deleteOne();
+
+        res.status(200).json({
+            success: true,
+            message: "Hostel and all related data (rooms, reviews, questions) deleted successfully"
         });
 
     } catch (error: any) {
