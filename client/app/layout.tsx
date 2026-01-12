@@ -17,16 +17,15 @@ export const metadata: Metadata = {
   title: "Hostel Finder | Find Your Perfect Stay",
   description: "Premium Hostel Booking Platform",
 };
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${playfair.variable} ${jakarta.variable} antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="light">
+      <body>
+        <ThemeProvider 
+          attribute="class" 
+          defaultTheme="system" 
+          enableSystem
+        >
           {children}
         </ThemeProvider>
       </body>

@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { HiOutlineMenuAlt3 } from "react-icons/hi";
+import { HiOutlineMenuAlt3, HiOutlineUserCircle, HiX } from "react-icons/hi";
 import { navItems } from "../utils/navItems";
 import { ThemeSwitcher } from "../utils/ThemeSwitcher";
-import Logo from "../../assets/logo.png"; 
 
 const Header = () => {
   const [active, setActive] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,6 +18,14 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [open]);
 
   return (
     <header
@@ -32,7 +40,7 @@ const Header = () => {
         <Link href="/" className="flex items-center gap-2 group">
           <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-brand-primary dark:bg-dark-primary flex items-center justify-center transition-transform group-hover:scale-105">
             <Image 
-              src={Logo}
+              src="/next.svg" 
               alt="Logo"
               width={28}
               height={28}
@@ -40,7 +48,7 @@ const Header = () => {
             />
           </div>
           <span className="font-heading font-bold text-2xl tracking-tight text-brand-primary dark:text-dark-text">
-            Stay<span className="text-brand-text dark:text-dark-primary">Hub</span>
+            HOSTELITE<span className="text-brand-text dark:text-dark-primary"></span>
           </span>
         </Link>
 
@@ -60,17 +68,61 @@ const Header = () => {
         <div className="flex items-center gap-2">
           <ThemeSwitcher />
           
-          <Link href="/auth" className="hidden sm:block">
-            <button className="relative px-8 py-3 rounded-full font-body font-bold text-xs uppercase tracking-widest overflow-hidden group bg-brand-primary text-brand-bg dark:bg-dark-primary dark:text-dark-bg transition-all hover:shadow-2xl hover:shadow-brand-primary/20">
-              <span className="relative z-10">Login</span>
-              <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-            </button>
+          <Link href="/login" className="hidden md:block">
+            <HiOutlineUserCircle 
+              size={32} 
+              className="text-black dark:text-[#fff8f2] cursor-pointer hover:opacity-80 transition-opacity" 
+            />
           </Link>
 
-          {/* Mobile Menu Icon */}
-          <button className="md:hidden ml-2 p-2 text-brand-primary dark:text-dark-text">
-            <HiOutlineMenuAlt3 size={28} />
+          <button 
+            className="md:hidden ml-2 text-brand-primary dark:text-dark-text outline-none"
+            onClick={() => setOpen(!open)}
+          >
+            <HiOutlineMenuAlt3 size={30} />
           </button>
+        </div>
+      </div>
+
+      <div 
+        className={`fixed inset-0 h-screen w-full bg-brand-bg/60 dark:bg-dark-bg/60 backdrop-blur-lg z-[1000] transition-all duration-500 ease-in-out md:hidden ${
+          open ? "opacity-100 pointer-events-auto translate-y-0" : "opacity-0 pointer-events-none -translate-y-full"
+        }`}
+      >
+        <div className="flex flex-col h-full p-8">
+          <div className="flex justify-between items-center mb-12">
+             <Link href="/login" onClick={() => setOpen(false)}>
+                <HiOutlineUserCircle 
+                  size={40} 
+                  className="text-black dark:text-[#fff8f2] cursor-pointer" 
+                />
+              </Link>
+            <HiX 
+              size={35} 
+              className="text-brand-primary dark:text-dark-text cursor-pointer" 
+              onClick={() => setOpen(false)} 
+            />
+          </div>
+
+          <nav className="flex flex-col items-center justify-center gap-8 flex-1">
+            {navItems.map((item, index) => (
+              <Link
+                key={index}
+                href={item.url}
+                onClick={() => setOpen(false)}
+                className={`text-4xl font-heading font-bold text-brand-primary dark:text-dark-text transition-all duration-500 ${
+                  open ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-10 opacity-0 scale-90'
+                }`}
+                style={{ transitionDelay: open ? `${index * 100}ms` : '0ms' }}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </nav>
+          
+          <div className="mt-auto text-center font-body text-xs tracking-widest uppercase opacity-40 text-brand-text dark:text-dark-text">
+             ©{new Date().getFullYear()} Hostelite. Premium Hostel Finder
+          </div>
         </div>
       </div>
     </header>

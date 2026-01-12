@@ -1,44 +1,24 @@
 @import "tailwindcss";
 
-@theme {
-  /* Light Mode Colors */
-  --color-brand-bg: #fff8f2;
-  --color-brand-primary: #2c1b13;
-  --color-brand-card: #ddc7ba;
-  --color-brand-text: #695346;
-
-  /* Dark Mode Colors (Suggested) */
-  --color-dark-bg: #1a120b;
-  --color-dark-primary: #ddc7ba;
-  --color-dark-card: #2c1b13;
-  --color-dark-text: #fff8f2;
-  
-  /* Custom Fonts */
-  --font-heading: "Playfair Display", serif;
-  --font-body: "Plus Jakarta Sans", sans-serif;
-}
-
 :root {
-  --background: var(--color-brand-bg);
-  --foreground: var(--color-brand-text);
+  --background: #fcf2e9;
+  --foreground: #1f1710;
+  --brand-primary: #2c1b13;
 }
 
 .dark {
-  --background: var(--color-dark-bg);
-  --foreground: var(--color-dark-text);
+  --background: #1f1710;
+  --foreground: #fcf2e9;
+  --brand-primary: #ddc7ba;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand-primary: var(--brand-primary);
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-body);
-}
-
-h1, h2, h3, h4 {
-  font-family: var(--font-heading);
-  color: var(--color-brand-primary);
-}
-
-.dark h1, .dark h2, .dark h3, .dark h4 {
-  color: var(--color-dark-primary);
 }
