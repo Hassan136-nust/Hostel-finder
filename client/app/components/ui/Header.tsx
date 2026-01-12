@@ -53,35 +53,35 @@ const Header = () => {
         </Link>
 
         <nav className="hidden md:flex items-center gap-10">
-          {navItems.map((item, index) => (
-            <Link
-              key={index}
-              href={item.url}
-              className="text-[14px] uppercase tracking-widest font-body font-semibold text-brand-text/70 hover:text-brand-primary dark:text-dark-text/60 dark:hover:text-dark-primary transition-all relative group"
-            >
-              {item.name}
-              <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-brand-primary dark:bg-dark-primary transition-all duration-300 group-hover:w-full" />
-            </Link>
-          ))}
-        </nav>
+  {navItems.map((item, index) => (
+   <Link
+  key={index}
+  href={item.url}
+  className="text-[14px] uppercase tracking-widest font-body font-semibold text-nav-text hover:opacity-70 transition-all relative group"
+>
+  {item.name}
+  <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-nav-text transition-all duration-300 group-hover:w-full" />
+</Link>
+  ))}
+</nav>
 
-        <div className="flex items-center gap-2">
-          <ThemeSwitcher />
-          
-          <Link href="/login" className="hidden md:block">
-            <HiOutlineUserCircle 
-              size={32} 
-              className="text-black dark:text-[#fff8f2] cursor-pointer hover:opacity-80 transition-opacity" 
-            />
-          </Link>
+     <div className="flex items-center gap-2">
+  <ThemeSwitcher />
+  
+  <Link href="/login" className="hidden md:block">
+  <HiOutlineUserCircle 
+    size={32} 
+    className="text-nav-text cursor-pointer hover:opacity-80 transition-opacity" 
+  />
+</Link>
 
-          <button 
-            className="md:hidden ml-2 text-brand-primary dark:text-dark-text outline-none"
-            onClick={() => setOpen(!open)}
-          >
-            <HiOutlineMenuAlt3 size={30} />
-          </button>
-        </div>
+<button 
+  className="md:hidden ml-2 text-nav-text outline-none"
+  onClick={() => setOpen(!open)}
+>
+  <HiOutlineMenuAlt3 size={30} />
+</button>
+</div>
       </div>
 
       <div 
