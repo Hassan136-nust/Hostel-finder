@@ -7,6 +7,7 @@ import userRouter from './routes/user.route';
 import hostelRouter from './routes/hostel.route';
 import roomRouter from './routes/room.routes';
 import socialRouter from './routes/social.route';
+import { apiLimiter, authLimiter } from './middlewares/rateLimter';
 export const app = express();
 
 app.use(cookieParser())
@@ -16,8 +17,9 @@ app.use(cors(({
     origin:process.env.ORIGIN,
 })))
 
+app.use('/api/v1' , apiLimiter)
 
-app.use('/api/v1' , userRouter)
+app.use('/api/v1' ,authLimiter, userRouter)
 app.use('/api/v1' , hostelRouter)
 app.use('/api/v1' , roomRouter)
 app.use('/api/v1' , socialRouter)
