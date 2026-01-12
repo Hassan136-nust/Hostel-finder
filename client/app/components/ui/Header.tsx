@@ -1,98 +1,76 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useTheme } from "next-themes";
-import { HiOutlineMenuAlt3 } from "react-icons/hi";
-import { BiMoon, BiSun } from "react-icons/bi";
 import Image from "next/image";
-import logo from "../../assets/logo.png";
+import { HiOutlineMenuAlt3 } from "react-icons/hi";
+import { navItems } from "../utils/navItems";
+import { ThemeSwitcher } from "../utils/ThemeSwitcher";
+import Logo from "../../assets/logo.png"; 
 
 const Header = () => {
   const [active, setActive] = useState(false);
-  const [open, setOpen] = useState(false);
-  const { theme, setTheme, resolvedTheme } = useTheme();
 
-  // Scroll logic ko handle karne ke liye simple useEffect
   useEffect(() => {
     const handleScroll = () => {
       setActive(window.scrollY > 80);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Theme icons ko safely render karne ke liye helper function
-  const renderThemeChanger = () => {
-    // Agar theme detect nahi hui toh khali space dikhao (Hydration error se bachne ke liye)
-    if (!resolvedTheme) return <div className="p-2 w-[38px] h-[38px]" />;
-
-    return (
-      <button
-        aria-label="Toggle Theme"
-        className="cursor-pointer p-2 rounded-full hover:bg-brand-card/30 dark:hover:bg-dark-card transition-all"
-        onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      >
-        {resolvedTheme === "light" ? (
-          <BiMoon size={22} className="text-brand-primary" />
-        ) : (
-          <BiSun size={22} className="text-dark-primary" />
-        )}
-      </button>
-    );
-  };
-
   return (
     <header
-      className={`w-full min-h-[70px] flex items-center justify-between px-4 md:px-10 sticky top-0 z-[999] transition-all duration-300 ${
-        active
-          ? "bg-brand-bg/80 dark:bg-dark-bg/80 backdrop-blur-md shadow-sm"
-          : "bg-transparent"
+      className={`fixed top-0 left-0 w-full z-[999] transition-all duration-500 ${
+        active 
+          ? "bg-brand-bg/80 dark:bg-dark-bg/80 backdrop-blur-xl py-3 shadow-lg" 
+          : "bg-transparent py-6"
       }`}
     >
-
-      <Link href="/" className="flex items-center gap-2">
-          <Image
-            src={logo}
-            alt="Hostel Finder Logo"
-            width={100}
-            height={100}
-            className="object-contain"
-          />
-          <span className="font-heading font-bold text-xl hidden sm:block text-brand-primary dark:text-dark-text">
-            HOSTELITE<span className="text-brand-text dark:text-dark-primary"></span>
+      <div className="max-w-[1440px] mx-auto flex items-center justify-between px-6 md:px-12">
+        
+        <Link href="/" className="flex items-center gap-2 group">
+          <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-brand-primary dark:bg-dark-primary flex items-center justify-center transition-transform group-hover:scale-105">
+            <Image 
+              src={Logo}
+              alt="Logo"
+              width={28}
+              height={28}
+              className="object-contain invert dark:invert-0"
+            />
+          </div>
+          <span className="font-heading font-bold text-2xl tracking-tight text-brand-primary dark:text-dark-text">
+            Stay<span className="text-brand-text dark:text-dark-primary">Hub</span>
           </span>
         </Link>
 
-      {/* Navigation Links - Desktop */}
-      <nav className="hidden md:flex items-center gap-8">
-        {["Home", "Hostels", "About Us", "Contact"].map((item) => (
-          <Link
-            key={item}
-            href={`/${item.toLowerCase().replace(" ", "")}`}
-            className="text-[16px] font-body font-[500] hover:text-brand-primary dark:hover:text-dark-primary transition-colors"
-          >
-            {item}
+        <nav className="hidden md:flex items-center gap-10">
+          {navItems.map((item, index) => (
+            <Link
+              key={index}
+              href={item.url}
+              className="text-[14px] uppercase tracking-widest font-body font-semibold text-brand-text/70 hover:text-brand-primary dark:text-dark-text/60 dark:hover:text-dark-primary transition-all relative group"
+            >
+              {item.name}
+              <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-brand-primary dark:bg-dark-primary transition-all duration-300 group-hover:w-full" />
+            </Link>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-2">
+          <ThemeSwitcher />
+          
+          <Link href="/auth" className="hidden sm:block">
+            <button className="relative px-8 py-3 rounded-full font-body font-bold text-xs uppercase tracking-widest overflow-hidden group bg-brand-primary text-brand-bg dark:bg-dark-primary dark:text-dark-bg transition-all hover:shadow-2xl hover:shadow-brand-primary/20">
+              <span className="relative z-10">Login</span>
+              <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            </button>
           </Link>
-        ))}
-      </nav>
 
-      {/* Right Side Icons & Auth */}
-      <div className="flex items-center gap-5">
-        {/* Theme Toggler Call */}
-        {renderThemeChanger()}
-
-        {/* Auth Button */}
-        <div className="hidden md:block">
-          <button className="bg-brand-primary dark:bg-dark-primary text-brand-bg dark:text-dark-bg px-6 py-2 rounded-full font-body font-[600] text-[14px] hover:opacity-90 transition-opacity">
-            Login
+          {/* Mobile Menu Icon */}
+          <button className="md:hidden ml-2 p-2 text-brand-primary dark:text-dark-text">
+            <HiOutlineMenuAlt3 size={28} />
           </button>
-        </div>
-
-        {/* Mobile Menu Icon */}
-        <div className="md:hidden cursor-pointer" onClick={() => setOpen(!open)}>
-          <HiOutlineMenuAlt3 size={25} className="text-brand-primary dark:text-dark-text" />
         </div>
       </div>
     </header>

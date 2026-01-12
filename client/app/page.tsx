@@ -1,5 +1,4 @@
 import Header from "./components/ui/Header";
- // Ab hum Hero section alag banayenge
 
 export default function Home() {
   return (
@@ -7,7 +6,6 @@ export default function Home() {
       <Header />
       <main>
       
-        {/* Baki sections (Featured, Reviews) niche ayenge */}
       </main>
     </div>
   );
