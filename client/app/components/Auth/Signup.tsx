@@ -28,6 +28,7 @@ const SignUp = ({ open, setOpen, setRoute }: Props) => {
   const [show, setShow] = useState(false);
   const [isVerification, setIsVerification] = useState(false);
   const [activationToken, setActivationToken] = useState("");
+  const [toastId, setToastId] = useState<string | null>(null);
 
   const [register, { isSuccess: registerSuccess, error: registerError, data: registerData }] = useRegisterMutation();
   const [activate, { isSuccess: activateSuccess, error: activateError }] = useActivateMutation();
@@ -52,6 +53,8 @@ const SignUp = ({ open, setOpen, setRoute }: Props) => {
     validationSchema: registerSchema,
     onSubmit: async ({ name, email, phone, password }) => {
       const data = { name, email, phone, password };
+      const id = toast.loading("Creating your account...");
+      setToastId(id);
       await register(data);
     },
   });
@@ -60,6 +63,8 @@ const SignUp = ({ open, setOpen, setRoute }: Props) => {
     initialValues: { verificationCode: "" },
     validationSchema: verificationSchema,
     onSubmit: async ({ verificationCode }) => {
+      const id = toast.loading("Verifying your account...");
+      setToastId(id);
       await activate({
         activation_token: activationToken,
         activation_code: verificationCode,
@@ -69,29 +74,33 @@ const SignUp = ({ open, setOpen, setRoute }: Props) => {
 
   useEffect(() => {
     if (registerSuccess && registerData) {
-      toast.success(registerData.message);
+      toast.success(registerData.message || "Account created");
       setActivationToken(registerData.activationToken);
       setIsVerification(true);
     }
-    if (registerError) {
+    if (registerError && toastId) {
       if ("data" in registerError) {
         const errorData = registerError as ErrorData;
-        toast.error(errorData.data.message);
+      toast.error(errorData.data.message, { id: toastId });
+      }else {
+        toast.error("Something went wrong!", { id: toastId });
       }
     }
   }, [registerSuccess, registerError, registerData]);
 
   useEffect(() => {
-    if (activateSuccess) {
-      toast.success("Account activated successfully! Please login.");
+    if (activateSuccess && toastId) {
+      toast.success("Account activated successfully! Please login." , { id: toastId });
       setIsVerification(false);
       setOpen(false);
       setRoute("Login");
     }
-    if (activateError) {
+    if (activateError && toastId) {
       if ("data" in activateError) {
         const errorData = activateError as ErrorData;
-        toast.error(errorData.data.message);
+        toast.error(errorData.data.message, { id: toastId });
+      }else { 
+        toast.error("Something went wrong!", { id: toastId });
       }
     }
   }, [activateSuccess, activateError]);

@@ -1,8 +1,9 @@
 import { apiSlice } from "../api/apiSlice";
-import { userLoggedIn, userRegistration } from "./authSlice";
+import { userLoggedIn, userRegistration, userLoggedOut } from "./authSlice";
 
 export const authApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    // Registration
     register: builder.mutation({
       query: (data) => ({
         url: "registration",
@@ -24,25 +25,21 @@ export const authApi = apiSlice.injectEndpoints({
       },
     }),
 
+    // Activation
     activate: builder.mutation({
       query: ({ activation_token, activation_code }) => ({
         url: "activate-user",
         method: "POST",
-        body: {
-          activation_token,
-          activation_code,
-        },
+        body: { activation_token, activation_code },
       }),
     }),
 
+    // Login
     login: builder.mutation({
       query: ({ email, password }) => ({
         url: "login",
         method: "POST",
-        body: {
-          email,
-          password,
-        },
+        body: { email, password },
         credentials: "include" as const,
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
@@ -62,8 +59,9 @@ export const authApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { 
-  useRegisterMutation, 
-  useActivateMutation, 
+// Export hooks
+export const {
+  useRegisterMutation,
+  useActivateMutation,
   useLoginMutation 
 } = authApi;

@@ -1,24 +1,26 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface User {
-  id: string;
+  _id: string;
   name: string;
   email: string;
+  phone?: string;
   role: string;
   avatar?: {
     public_id: string;
     url: string;
   };
+  hostelRequestStatus?: string;
 }
 
 interface AuthState {
   token: string;
-  user: User | string;
+  user: User | null;
 }
 
 const initialState: AuthState = {
   token: "",
-  user: "",
+  user: null,
 };
 
 const authSlice = createSlice({
@@ -34,7 +36,7 @@ const authSlice = createSlice({
     },
     userLoggedOut: (state) => {
       state.token = "";
-      state.user = "";
+      state.user = null;
     },
   },
 });
