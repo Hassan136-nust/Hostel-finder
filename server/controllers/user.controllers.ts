@@ -85,6 +85,7 @@ const createActivationToken = (user: any) => {
 };
 
 
+
 export const activateUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     const { activation_token, activation_code } = req.body as IActivationRequest;
@@ -109,21 +110,28 @@ export const activateUser = CatchAsyncError(
 
     const { name, email, phone, password, avatar } = payload.user;
 
+    // Check if user already exists
     const existUser = await userModel.findOne({ email });
     if (existUser) {
       return next(new ErrorHandler("Email already exists", 400));
     }
 
-    await userModel.create({
+    // Log the data being saved for debugging
+    console.log("Creating user with data:", { name, email, phone, password: "***", avatar });
+
+    // Create user with all required fields
+    const newUser = await userModel.create({
       name,
       email,
-      phone,
+      phone, 
       password,
-      avatar,
+      avatar: avatar || undefined, 
       isActive: true, 
       role: "user",
       hostelRequestStatus: "none",
     });
+
+    console.log("User created successfully:", newUser._id);
 
     res.status(200).json({
       success: true,

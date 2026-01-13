@@ -16,3 +16,11 @@ const eslintConfig = defineConfig([
 ]);
 
 export default eslintConfig;
+
+
+module.exports = tseslint.config({
+  rules: {
+    "@typescript-eslint/no-explicit-any": "warn"
+
+  }
+});

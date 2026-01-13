@@ -45,10 +45,15 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
         select: false,
     },
    phone: {
-     type: String,
-     trim: true,
-     match: [/^[0-9]{10,15}$/, "Please enter a valid phone number"]
-},
+      type: String,
+      required: [true, "Please enter your phone number"],
+      validate: {
+        validator: function (value: string) {
+          return /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/.test(value);
+        },
+        message: "Please enter a valid phone number",
+      },
+    },
     avatar: {
         public_id: String,
         url: String,
