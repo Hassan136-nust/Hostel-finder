@@ -1,21 +1,59 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HiX } from "react-icons/hi";
 import { FcGoogle } from "react-icons/fc";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { motion, AnimatePresence } from "framer-motion";
 import Lottie from "lottie-react";
 import loginAnimation from "../../assets/json/Login.json";
+import { useFormik } from "formik";
+import toast from "react-hot-toast";
+import * as Yup from "yup";
+import { useLoginMutation } from "@/app/redux/features/auth/authApi";
 
 interface Props {
   open: boolean;
   setOpen: (open: boolean) => void;
   setRoute: (route: string) => void;
 }
+interface ErrorData {
+  data: {
+    message: string;
+  };
+}
 
 const Login = ({ open, setOpen, setRoute }: Props) => {
   const [show, setShow] = useState(false);
+const [login, { isSuccess, error }] = useLoginMutation();
+
+const schema = Yup.object().shape({
+  email: Yup.string().email("Invalid email!").required("Please enter your email!"),
+  password: Yup.string().required("Please enter your password!").min(6),
+});
+
+  const formik = useFormik({
+    initialValues: { email: "", password: "" },
+    validationSchema: schema,
+    onSubmit: async ({ email, password }) => {
+      await login({ email, password });
+    },
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Login Successfully!");
+      setOpen(false);
+    }
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as ErrorData;
+        toast.error(errorData.data.message);
+      }
+    }
+  }, [isSuccess, error]);
+
+  const { errors, touched, values, handleChange, handleSubmit } = formik;
 
   return (
     <AnimatePresence>

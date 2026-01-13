@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import Logo from '../../assets/logo.png'
 import { HiOutlineMenuAlt3, HiOutlineUserCircle, HiX } from "react-icons/hi";
 import { navItems } from "../utils/navItems";
 import { ThemeSwitcher } from "../utils/ThemeSwitcher";
@@ -42,18 +43,26 @@ const Header = () => {
       >
         <div className="max-w-[1440px] mx-auto flex items-center justify-between px-6 md:px-12">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-brand-primary dark:bg-dark-primary flex items-center justify-center transition-transform group-hover:scale-105">
+            <div className="relative w-14 h-14 overflow-hidden rounded-xl bg-brand-primary dark:bg-dark-primary flex items-center justify-center transition-transform group-hover:scale-105">
               <Image
-                src="/next.svg"
+                src={Logo}
                 alt="Logo"
-                width={28}
-                height={28}
+                width={68}
+                height={68}
                 className="object-contain invert dark:invert-0"
               />
             </div>
+            <div className="flex flex-col leading-tight">
+
             <span className="font-heading font-bold text-2xl tracking-tight text-brand-primary dark:text-dark-text">
-              HOSTELITE
+              HOSTELITES
             </span>
+            <span className=" font text-sm tracking-tight text-brand-primary dark:text-dark-text ">
+             <i>
+               Beyond Ordinary
+              </i>
+            </span>
+            </div>
           </Link>
 
           <nav className="hidden md:flex items-center gap-10">
