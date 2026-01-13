@@ -1,36 +1,33 @@
 @import "tailwindcss";
 
 :root {
+  /* PAGE */
   --background: #fcf2e9;
   --foreground: #1f1710;
-  --brand-primary: #2c1b13;
-  --nav-text: #000000; 
+
+  /* MODAL (INVERTED) */
+  --modal-bg: #2c1b13;
+  --modal-text: #fcf2e9;
 }
 
 .dark {
   --background: #1f1710;
   --foreground: #fcf2e9;
-  --brand-primary: #ddc7ba;
-  --nav-text: #fcf2e9;
+
+  --modal-bg: #fcf2e9;
+  --modal-text: #2c1b13;
 }
 
+/* ✅ TAILWIND COLOR TOKENS (THIS WAS MISSING) */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-brand-primary: var(--brand-primary);
-  --color-nav-text: var(--nav-text);
+
+  --color-modal-bg: var(--modal-bg);
+  --color-modal-text: var(--modal-text);
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-}
-
-@layer utilities {
-  .mask-fix {
-    -webkit-mask-image: -webkit-radial-gradient(white, black);
-    mask-image: radial-gradient(white, black);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-  }
 }

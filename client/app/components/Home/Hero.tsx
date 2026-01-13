@@ -94,10 +94,7 @@ const Hero = () => {
           />
         </div>
       ))}
-      <div className="relative w-14 h-14 rounded-full border-4 border-[#fcf2e9] dark:border-[#1f1710] bg-brand-primary flex flex-col items-center justify-center shadow-lg z-0">
-        <span className="text-[12px] font-bold text-[#fcf2e9] leading-none">+2k</span>
-        <span className="text-[7px] text-[#fcf2e9]/70 uppercase font-bold tracking-tighter">Users</span>
-      </div>
+     
     </div>
     
     <div className="ml-5">
@@ -109,7 +106,7 @@ const Hero = () => {
         ))}
       </div>
       <p className="text-[12px] font-heading font-bold uppercase tracking-tight text-brand-primary dark:text-dark-primary">
-        Trusted by Students
+        Trusted by 2k+ Students
       </p>
     </div>
   </div>
@@ -133,14 +130,14 @@ const Hero = () => {
     </div>
 
       <div className="relative h-[350px] md:h-[450px] w-full group isolation-isolate">
-  <div className="absolute inset-0 border-[12px] border-brand-card/30 rounded-[2.5rem] rotate-6 scale-105 -z-10 group-hover:rotate-0 group-hover:scale-100 transition-all duration-700 ease-in-out will-change-transform"></div>
+  <div className="absolute inset-0 border-[12px] border-brand-card/30 rounded-[2.5rem] rotate-6 scale-104 -z-10 group-hover:rotate-0 group-hover:scale-100 transition-all duration-700 ease-in-out will-change-transform"></div>
   
   <div className="relative h-full w-full rounded-[2.5rem] shadow-2xl transition-all duration-700 ease-in-out rotate-6 group-hover:rotate-0 group-hover:scale-[0.98] transform-gpu will-change-transform overflow-hidden mask-fix">
     <Image 
       src={hero}
       alt="Luxury Hostel Interior"
       fill
-      className="object-cover transition-all duration-1000 group-hover:scale-110 transform-gpu rounded-[2.5rem]"
+      className="object-cover transition-all duration-1000 group-hover:scale-110 transform-gpu rounded-[1.5rem]"
       priority
       sizes="(max-width: 768px) 100vw, 50vw"
     />
