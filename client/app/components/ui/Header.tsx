@@ -4,17 +4,20 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Logo from '../../assets/logo.png'
+import Avatar from '../../assets/logo.png' 
 import { HiOutlineMenuAlt3, HiOutlineUserCircle, HiX } from "react-icons/hi";
 import { navItems } from "../utils/navItems";
 import { ThemeSwitcher } from "../utils/ThemeSwitcher";
 import Login from "../Auth/Login";
 import SignUp from "../Auth/Signup";
+import { useSelector } from "react-redux";
 
 const Header = () => {
   const [active, setActive] = useState(false);
   const [open, setOpen] = useState(false);
   const [openLogin, setOpenLogin] = useState(false);
   const [route, setRoute] = useState("Login");
+  const { user } = useSelector((state: any) => state.auth);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,15 +56,12 @@ const Header = () => {
               />
             </div>
             <div className="flex flex-col leading-tight">
-
-            <span className="font-heading font-bold text-2xl tracking-tight text-brand-primary dark:text-dark-text">
-              HOSTELITES
-            </span>
-            <span className=" font text-sm tracking-tight text-brand-primary dark:text-dark-text ">
-             <i>
-               Beyond Ordinary
-              </i>
-            </span>
+              <span className="font-heading font-bold text-2xl tracking-tight text-brand-primary dark:text-dark-text">
+                HOSTELITES
+              </span>
+              <span className=" font text-sm tracking-tight text-brand-primary dark:text-dark-text ">
+                <i>Beyond Ordinary</i>
+              </span>
             </div>
           </Link>
 
@@ -81,12 +81,24 @@ const Header = () => {
           <div className="flex items-center gap-2">
             <ThemeSwitcher />
 
-            <div onClick={() => setOpenLogin(true)} className="hidden md:block">
-              <HiOutlineUserCircle
-                size={32}
-                className="text-nav-text cursor-pointer hover:opacity-80 transition-opacity"
-              />
-            </div>
+            {user ? (
+              <Link href="/profile">
+                <Image
+                  src={user.avatar?.url || Avatar}
+                  alt="User Avatar"
+                  width={32}
+                  height={32}
+                  className="w-8 h-8 rounded-full cursor-pointer object-cover border-2 border-brand-primary dark:border-dark-primary"
+                />
+              </Link>
+            ) : (
+              <div onClick={() => setOpenLogin(true)} className="hidden md:block">
+                <HiOutlineUserCircle
+                  size={32}
+                  className="text-nav-text cursor-pointer hover:opacity-80 transition-opacity"
+                />
+              </div>
+            )}
 
             <button
               className="md:hidden ml-2 text-nav-text outline-none"
@@ -106,17 +118,29 @@ const Header = () => {
         >
           <div className="flex flex-col h-full p-8">
             <div className="flex justify-between items-center mb-12">
-              <div
-                onClick={() => {
-                  setOpen(false);
-                  setOpenLogin(true);
-                }}
-              >
-                <HiOutlineUserCircle
-                  size={40}
-                  className="text-black dark:text-[#fff8f2] cursor-pointer"
-                />
-              </div>
+              {user ? (
+                <Link href="/profile" onClick={() => setOpen(false)}>
+                  <Image
+                    src={user.avatar?.url || Avatar}
+                    alt="User Avatar"
+                    width={40}
+                    height={40}
+                    className="w-10 h-10 rounded-full cursor-pointer object-cover border-2 border-brand-primary dark:border-dark-primary"
+                  />
+                </Link>
+              ) : (
+                <div
+                  onClick={() => {
+                    setOpen(false);
+                    setOpenLogin(true);
+                  }}
+                >
+                  <HiOutlineUserCircle
+                    size={40}
+                    className="text-black dark:text-[#fff8f2] cursor-pointer"
+                  />
+                </div>
+              )}
               <HiX
                 size={35}
                 className="text-brand-primary dark:text-dark-text cursor-pointer"
@@ -151,26 +175,17 @@ const Header = () => {
         </div>
       </header>
 
-      {/* Modal Logic */}
-{openLogin && (
-  <>
-    {route === "Login" && (
-      <Login
-        open={openLogin}
-        setOpen={setOpenLogin}
-        setRoute={setRoute}
-      />
-    )}
+      {openLogin && (
+        <>
+          {route === "Login" && (
+            <Login open={openLogin} setOpen={setOpenLogin} setRoute={setRoute} />
+          )}
 
-    {route === "Sign-Up" && (
-      <SignUp
-        open={openLogin}
-        setOpen={setOpenLogin}
-        setRoute={setRoute}
-      />
-    )}
-  </>
-)}
+          {route === "Sign-Up" && (
+            <SignUp open={openLogin} setOpen={setOpenLogin} setRoute={setRoute} />
+          )}
+        </>
+      )}
     </>
   );
 };
