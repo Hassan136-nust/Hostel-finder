@@ -33,7 +33,6 @@ const SignUp = ({ open, setOpen, setRoute }: Props) => {
   const [register, { isSuccess: registerSuccess, error: registerError, data: registerData }] = useRegisterMutation();
   const [activate, { isSuccess: activateSuccess, error: activateError }] = useActivateMutation();
 
-  // Registration Schema
   const registerSchema = Yup.object().shape({
     name: Yup.string().required("Please enter your name!"),
     email: Yup.string().email("Invalid email!").required("Please enter your email!"),
@@ -113,7 +112,6 @@ const SignUp = ({ open, setOpen, setRoute }: Props) => {
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
-          {/* Overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
