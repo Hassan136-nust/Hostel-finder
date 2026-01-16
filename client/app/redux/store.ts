@@ -11,14 +11,29 @@ export const store = configureStore({
     getDefaultMiddleware().concat(apiSlice.middleware),
 });
 
-const initalizeApp = async () => {
+const initializeApp = async () => {
   try {
-    await store.dispatch(apiSlice.endpoints.refreshToken.initiate({}, { forceRefetch: true }));
-    await store.dispatch(apiSlice.endpoints.loadUser.initiate({}, { forceRefetch: true }));
-    } catch (error:any)
-    {
-      console.log("Error during app initialization:", error);
-    }
+    console.log("Initializing app..."); 
+    
+    const refreshResult = await store.dispatch(
+      apiSlice.endpoints.refreshToken.initiate({}, { forceRefetch: true })
+    );
+    
+    console.log("Refresh result:", refreshResult); 
+    
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    const loadUserResult = await store.dispatch(
+      apiSlice.endpoints.loadUser.initiate({}, { forceRefetch: true })
+    );
+    
+    console.log("Load user result:", loadUserResult);
+    
+  } catch (error: any) {
+    console.log("Error during app initialization:", error);
+  }
 };
 
-initalizeApp();
+if (typeof window !== 'undefined') {
+  initializeApp();
+}

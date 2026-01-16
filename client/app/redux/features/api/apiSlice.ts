@@ -6,17 +6,17 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_SERVER_URI,
     credentials: "include", 
-            }),
+  }),
   endpoints: (builder) => ({
     refreshToken: builder.query({
-      query: (data) => ({
+      query: () => ({
         url: "refresh",
         method: "GET",
         credentials: "include" as const,
       }),
     }),
     loadUser: builder.query({
-      query: (data) => ({
+      query: () => ({
         url: "me",
         method: "GET",
         credentials: "include" as const,
@@ -24,16 +24,19 @@ export const apiSlice = createApi({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
+          console.log("Load user result:", result.data); 
+          
           dispatch(
             userLoggedIn({
-              accessToken: result.data.activationToken,
+              accessToken: result.data.accessToken || "",
               user: result.data.user,
             })
           );
         } catch (error: any) {
-          console.log(error);
+          console.log("Load user error:", error);
+        
         }
-    },   
+      },   
     }),
   }),   
 });

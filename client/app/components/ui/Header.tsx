@@ -10,14 +10,15 @@ import { navItems } from "../utils/navItems";
 import { ThemeSwitcher } from "../utils/ThemeSwitcher";
 import Login from "../Auth/Login";
 import SignUp from "../Auth/Signup";
-import { useSelector } from "react-redux";
+import { useAuth } from "@/app/hooks/useAuth";
 
 const Header = () => {
   const [active, setActive] = useState(false);
   const [open, setOpen] = useState(false);
   const [openLogin, setOpenLogin] = useState(false);
   const [route, setRoute] = useState("Login");
-  const { user } = useSelector((state: any) => state.auth);
+    const { user, isLoading } = useAuth();
+
 
   useEffect(() => {
     const handleScroll = () => {
