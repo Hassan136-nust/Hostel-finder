@@ -9,6 +9,7 @@ import { navItems } from "../utils/navItems";
 import { ThemeSwitcher } from "../utils/ThemeSwitcher";
 import Login from "../Auth/Login";
 import SignUp from "../Auth/Signup";
+import Verification from "../Auth/Verification";
 
 const Header = () => {
   const [active, setActive] = useState(false);
@@ -161,6 +162,17 @@ const Header = () => {
           setOpen={setOpenAuth}
           setRoute={setRoute}
         />
+      )}
+      {route === "Verification" && (
+        <>
+          {open && (
+            <Verification
+              open={open}
+              setOpen={setOpen}
+              setRoute={setRoute}
+            />
+          )}
+        </>
       )}
     </header>
   );

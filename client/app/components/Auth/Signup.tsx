@@ -1,16 +1,21 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { HiX } from "react-icons/hi";
+import React, { useEffect, useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import {
+  AiOutlineEye,
+  AiOutlineEyeInvisible,
+} from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { HiX } from "react-icons/hi";
+import { useRegisterMutation } from "@/redux/features/auth/authApi";
+import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import Lottie from "lottie-react";
 import signupAnimation from "../../assets/json/Sign.json";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { useRegisterMutation } from "@/redux/features/auth/authApi";
-import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { userRegistration } from "@/redux/features/auth/authSlice";
 
 interface Props {
   open: boolean;
@@ -20,7 +25,9 @@ interface Props {
 
 const schema = Yup.object().shape({
   name: Yup.string().required("Please enter your name"),
-  email: Yup.string().email("Invalid email").required("Please enter your email"),
+  email: Yup.string()
+    .email("Invalid email")
+    .required("Please enter your email"),
   password: Yup.string().required("Please enter your password").min(6),
   phone: Yup.string().required("Please enter your phone number").min(10),
 });
@@ -28,12 +35,16 @@ const schema = Yup.object().shape({
 const SignUp = ({ open, setOpen, setRoute }: Props) => {
   const [show, setShow] = useState(false);
   const [register, { data, error, isSuccess, isLoading }] = useRegisterMutation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (isSuccess) {
       const message = data?.message || "Registration successful";
       toast.success(message);
       setRoute("Verification");
+      if (data?.activationToken) {
+        dispatch(userRegistration({ token: data.activationToken }));
+      }
     }
     if (error) {
       if ("data" in error) {
@@ -41,7 +52,7 @@ const SignUp = ({ open, setOpen, setRoute }: Props) => {
         toast.error(errorData.data.message);
       }
     }
-  }, [isSuccess, error, data, setRoute]);
+  }, [isSuccess, error, data, setRoute, dispatch]);
 
   const formik = useFormik({
     initialValues: { name: "", email: "", password: "", phone: "" },
@@ -128,14 +139,20 @@ const SignUp = ({ open, setOpen, setRoute }: Props) => {
                     className={`
                       w-full px-5 py-3.5 rounded-2xl outline-none
                       bg-white/10 dark:bg-black/5
-                      border ${errors.name && touched.name ? "border-red-500" : "border-white/10 dark:border-black/10"}
+                      border ${
+                        errors.name && touched.name
+                          ? "border-red-500"
+                          : "border-white/10 dark:border-black/10"
+                      }
                       focus:border-white/40 dark:focus:border-black/40
                       text-inherit placeholder:text-inherit placeholder:opacity-30
                       transition-all font-body
                     `}
                   />
                   {errors.name && touched.name && (
-                     <span className="text-red-500 text-xs block">{errors.name}</span>
+                    <span className="text-red-500 text-xs block">
+                      {errors.name}
+                    </span>
                   )}
                 </div>
 
@@ -152,14 +169,20 @@ const SignUp = ({ open, setOpen, setRoute }: Props) => {
                     className={`
                       w-full px-5 py-3.5 rounded-2xl outline-none
                       bg-white/10 dark:bg-black/5
-                      border ${errors.phone && touched.phone ? "border-red-500" : "border-white/10 dark:border-black/10"}
+                      border ${
+                        errors.phone && touched.phone
+                          ? "border-red-500"
+                          : "border-white/10 dark:border-black/10"
+                      }
                       focus:border-white/40 dark:focus:border-black/40
                       text-inherit placeholder:text-inherit placeholder:opacity-30
                       transition-all font-body appearance-none
                     `}
                   />
                   {errors.phone && touched.phone && (
-                     <span className="text-red-500 text-xs block">{errors.phone}</span>
+                    <span className="text-red-500 text-xs block">
+                      {errors.phone}
+                    </span>
                   )}
                 </div>
 
@@ -176,14 +199,20 @@ const SignUp = ({ open, setOpen, setRoute }: Props) => {
                     className={`
                       w-full px-5 py-3.5 rounded-2xl outline-none
                       bg-white/10 dark:bg-black/5
-                      border ${errors.email && touched.email ? "border-red-500" : "border-white/10 dark:border-black/10"}
+                      border ${
+                        errors.email && touched.email
+                          ? "border-red-500"
+                          : "border-white/10 dark:border-black/10"
+                      }
                       focus:border-white/40 dark:focus:border-black/40
                       text-inherit placeholder:text-inherit placeholder:opacity-30
                       transition-all font-body
                     `}
                   />
                   {errors.email && touched.email && (
-                     <span className="text-red-500 text-xs block">{errors.email}</span>
+                    <span className="text-red-500 text-xs block">
+                      {errors.email}
+                    </span>
                   )}
                 </div>
 
@@ -200,7 +229,11 @@ const SignUp = ({ open, setOpen, setRoute }: Props) => {
                     className={`
                       w-full px-5 py-3.5 rounded-2xl outline-none
                       bg-white/10 dark:bg-black/5
-                      border ${errors.password && touched.password ? "border-red-500" : "border-white/10 dark:border-black/10"}
+                      border ${
+                        errors.password && touched.password
+                          ? "border-red-500"
+                          : "border-white/10 dark:border-black/10"
+                      }
                       focus:border-white/40 dark:focus:border-black/40
                       text-inherit placeholder:text-inherit placeholder:opacity-30
                       transition-all font-body
@@ -217,7 +250,9 @@ const SignUp = ({ open, setOpen, setRoute }: Props) => {
                     )}
                   </div>
                   {errors.password && touched.password && (
-                     <span className="text-red-500 text-xs block pt-1">{errors.password}</span>
+                    <span className="text-red-500 text-xs block pt-1">
+                      {errors.password}
+                    </span>
                   )}
                 </div>
 
