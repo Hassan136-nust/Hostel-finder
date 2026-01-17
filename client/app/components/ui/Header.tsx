@@ -10,12 +10,17 @@ import { ThemeSwitcher } from "../utils/ThemeSwitcher";
 import Login from "../Auth/Login";
 import SignUp from "../Auth/Signup";
 import Verification from "../Auth/Verification";
+import { useSelector } from "react-redux";
+
+const DEFAULT_AVATAR = "/vercel.svg";
 
 const Header = () => {
   const [active, setActive] = useState(false);
-  const [open, setOpen] = useState(false); 
-  const [openAuth, setOpenAuth] = useState(false); 
-  const [route, setRoute] = useState("Login"); 
+  const [open, setOpen] = useState(false);
+  const [openAuth, setOpenAuth] = useState(false);
+  const [route, setRoute] = useState("Login");
+  const { user } = useSelector((state: any) => state.auth);
+
   useEffect(() => {
     const handleScroll = () => {
       setActive(window.scrollY > 80);
@@ -36,17 +41,16 @@ const Header = () => {
   return (
     <header
       className={`fixed top-0 left-0 w-full z-[999] transition-all duration-500 ${
-        active 
-          ? "bg-brand-bg/80 dark:bg-dark-bg/80 backdrop-blur-xl py-3 shadow-lg" 
+        active
+          ? "bg-brand-bg/80 dark:bg-dark-bg/80 backdrop-blur-xl py-3 shadow-lg"
           : "bg-transparent py-6"
       }`}
     >
       <div className="max-w-[1440px] mx-auto flex items-center justify-between px-6 md:px-12">
-        
         <Link href="/" className="flex items-center gap-2 group">
           <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-brand-primary dark:bg-dark-primary flex items-center justify-center transition-transform group-hover:scale-105">
-            <Image 
-              src={Logo} 
+            <Image
+              src={Logo}
               alt="Logo"
               width={28}
               height={28}
@@ -54,7 +58,7 @@ const Header = () => {
             />
           </div>
           <span className="font-heading font-bold text-2xl tracking-tight text-brand-primary dark:text-dark-text">
-            HOSTELITE<span className="text-brand-text dark:text-dark-primary"></span>
+            HOSTELITE
           </span>
         </Link>
 
@@ -73,22 +77,35 @@ const Header = () => {
 
         <div className="flex items-center gap-2">
           <ThemeSwitcher />
-          
-          {/* Desktop User Icon - Triggers Modal */}
-          <div 
-            onClick={() => {
-              setRoute("Login");
-              setOpenAuth(true);
-            }}
-            className="hidden md:block cursor-pointer"
-          >
-            <HiOutlineUserCircle 
-              size={32} 
-              className="text-black dark:text-[#fff8f2] hover:opacity-80 transition-opacity" 
-            />
+
+          {/* Desktop User Icon / Avatar */}
+          <div className="hidden md:block cursor-pointer">
+            {user ? (
+              <Link href={"/profile"}>
+                <Image
+                  src={user.avatar ? user.avatar.url : DEFAULT_AVATAR}
+                  alt="user"
+                  width={35}
+                  height={35}
+                  className="rounded-full border-2 border-brand-primary dark:border-dark-primary"
+                />
+              </Link>
+            ) : (
+              <div
+                onClick={() => {
+                  setRoute("Login");
+                  setOpenAuth(true);
+                }}
+              >
+                <HiOutlineUserCircle
+                  size={32}
+                  className="text-black dark:text-[#fff8f2] hover:opacity-80 transition-opacity"
+                />
+              </div>
+            )}
           </div>
 
-          <button 
+          <button
             className="md:hidden ml-2 text-brand-primary dark:text-dark-text outline-none"
             onClick={() => setOpen(!open)}
           >
@@ -98,31 +115,47 @@ const Header = () => {
       </div>
 
       {/* Mobile Sidebar */}
-      <div 
+      <div
         className={`fixed inset-0 h-screen w-full bg-brand-bg/60 dark:bg-dark-bg/60 backdrop-blur-lg z-[1000] transition-all duration-500 ease-in-out md:hidden ${
-          open ? "opacity-100 pointer-events-auto translate-y-0" : "opacity-0 pointer-events-none -translate-y-full"
+          open
+            ? "opacity-100 pointer-events-auto translate-y-0"
+            : "opacity-0 pointer-events-none -translate-y-full"
         }`}
       >
         <div className="flex flex-col h-full p-8">
           <div className="flex justify-between items-center mb-12">
-             {/* Mobile User Icon - Triggers Modal & Closes Sidebar */}
-             <div 
-                onClick={() => {
-                  setRoute("Login");
-                  setOpenAuth(true);
-                  setOpen(false);
-                }}
-                className="cursor-pointer"
-             >
-                <HiOutlineUserCircle 
-                  size={40} 
-                  className="text-black dark:text-[#fff8f2]" 
-                />
-              </div>
-            <HiX 
-              size={35} 
-              className="text-brand-primary dark:text-dark-text cursor-pointer" 
-              onClick={() => setOpen(false)} 
+            {/* Mobile User Icon / Avatar */}
+            <div className="cursor-pointer">
+              {user ? (
+                <Link href={"/profile"} onClick={() => setOpen(false)}>
+                  <Image
+                    src={user.avatar ? user.avatar.url : DEFAULT_AVATAR}
+                    alt="user"
+                    width={40}
+                    height={40}
+                    className="rounded-full border-2 border-brand-primary dark:border-dark-primary"
+                  />
+                </Link>
+              ) : (
+                <div
+                  onClick={() => {
+                    setRoute("Login");
+                    setOpenAuth(true);
+                    setOpen(false);
+                  }}
+                >
+                  <HiOutlineUserCircle
+                    size={40}
+                    className="text-black dark:text-[#fff8f2]"
+                  />
+                </div>
+              )}
+            </div>
+
+            <HiX
+              size={35}
+              className="text-brand-primary dark:text-dark-text cursor-pointer"
+              onClick={() => setOpen(false)}
             />
           </div>
 
@@ -133,46 +166,32 @@ const Header = () => {
                 href={item.url}
                 onClick={() => setOpen(false)}
                 className={`text-4xl font-heading font-bold text-brand-primary dark:text-dark-text transition-all duration-500 ${
-                  open ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-10 opacity-0 scale-90'
+                  open
+                    ? "translate-y-0 opacity-100 scale-100"
+                    : "translate-y-10 opacity-0 scale-90"
                 }`}
-                style={{ transitionDelay: open ? `${index * 100}ms` : '0ms' }}
+                style={{ transitionDelay: open ? `${index * 100}ms` : "0ms" }}
               >
                 {item.name}
               </Link>
             ))}
           </nav>
-          
+
           <div className="mt-auto text-center font-body text-xs tracking-widest uppercase opacity-40 text-brand-text dark:text-dark-text">
-             ©{new Date().getFullYear()} Hostelite. Premium Hostel Finder
+            ©{new Date().getFullYear()} Hostelite. Premium Hostel Finder
           </div>
         </div>
       </div>
 
       {/* Auth Modals */}
       {route === "Login" && (
-        <Login
-          open={openAuth}
-          setOpen={setOpenAuth}
-          setRoute={setRoute}
-        />
+        <Login open={openAuth} setOpen={setOpenAuth} setRoute={setRoute} />
       )}
       {route === "Sign-Up" && (
-        <SignUp
-          open={openAuth}
-          setOpen={setOpenAuth}
-          setRoute={setRoute}
-        />
+        <SignUp open={openAuth} setOpen={setOpenAuth} setRoute={setRoute} />
       )}
       {route === "Verification" && (
-        <>
-          {open && (
-            <Verification
-              open={open}
-              setOpen={setOpen}
-              setRoute={setRoute}
-            />
-          )}
-        </>
+        <Verification open={openAuth} setOpen={setOpenAuth} setRoute={setRoute} />
       )}
     </header>
   );
