@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -7,11 +6,14 @@ import Image from "next/image";
 import { HiOutlineMenuAlt3, HiOutlineUserCircle, HiX } from "react-icons/hi";
 import { navItems } from "../utils/navItems";
 import { ThemeSwitcher } from "../utils/ThemeSwitcher";
+import Login from "../Auth/Login";
+import SignUp from "../Auth/Signup";
 
 const Header = () => {
   const [active, setActive] = useState(false);
-  const [open, setOpen] = useState(false);
-
+  const [open, setOpen] = useState(false); 
+  const [openAuth, setOpenAuth] = useState(false); 
+  const [route, setRoute] = useState("Login"); 
   useEffect(() => {
     const handleScroll = () => {
       setActive(window.scrollY > 80);
@@ -20,13 +22,14 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Handle body scroll lock for both Sidebar and Auth Modals
   useEffect(() => {
-    if (open) {
+    if (open || openAuth) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
-  }, [open]);
+  }, [open, openAuth]);
 
   return (
     <header
@@ -69,12 +72,19 @@ const Header = () => {
         <div className="flex items-center gap-2">
           <ThemeSwitcher />
           
-          <Link href="/login" className="hidden md:block">
+          {/* Desktop User Icon - Triggers Modal */}
+          <div 
+            onClick={() => {
+              setRoute("Login");
+              setOpenAuth(true);
+            }}
+            className="hidden md:block cursor-pointer"
+          >
             <HiOutlineUserCircle 
               size={32} 
-              className="text-black dark:text-[#fff8f2] cursor-pointer hover:opacity-80 transition-opacity" 
+              className="text-black dark:text-[#fff8f2] hover:opacity-80 transition-opacity" 
             />
-          </Link>
+          </div>
 
           <button 
             className="md:hidden ml-2 text-brand-primary dark:text-dark-text outline-none"
@@ -85,6 +95,7 @@ const Header = () => {
         </div>
       </div>
 
+      {/* Mobile Sidebar */}
       <div 
         className={`fixed inset-0 h-screen w-full bg-brand-bg/60 dark:bg-dark-bg/60 backdrop-blur-lg z-[1000] transition-all duration-500 ease-in-out md:hidden ${
           open ? "opacity-100 pointer-events-auto translate-y-0" : "opacity-0 pointer-events-none -translate-y-full"
@@ -92,12 +103,20 @@ const Header = () => {
       >
         <div className="flex flex-col h-full p-8">
           <div className="flex justify-between items-center mb-12">
-             <Link href="/login" onClick={() => setOpen(false)}>
+             {/* Mobile User Icon - Triggers Modal & Closes Sidebar */}
+             <div 
+                onClick={() => {
+                  setRoute("Login");
+                  setOpenAuth(true);
+                  setOpen(false);
+                }}
+                className="cursor-pointer"
+             >
                 <HiOutlineUserCircle 
                   size={40} 
-                  className="text-black dark:text-[#fff8f2] cursor-pointer" 
+                  className="text-black dark:text-[#fff8f2]" 
                 />
-              </Link>
+              </div>
             <HiX 
               size={35} 
               className="text-brand-primary dark:text-dark-text cursor-pointer" 
@@ -126,6 +145,22 @@ const Header = () => {
           </div>
         </div>
       </div>
+
+      {/* Auth Modals */}
+      {route === "Login" && (
+        <Login
+          open={openAuth}
+          setOpen={setOpenAuth}
+          setRoute={setRoute}
+        />
+      )}
+      {route === "Sign-Up" && (
+        <SignUp
+          open={openAuth}
+          setOpen={setOpenAuth}
+          setRoute={setRoute}
+        />
+      )}
     </header>
   );
 };
