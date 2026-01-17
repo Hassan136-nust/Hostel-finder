@@ -17,25 +17,23 @@ export const store = configureStore({
 const initializeApp = async () => {
   const state = store.getState();
   
-  if (state.auth.user) {
+  if (state.auth.user && state.auth.token) {
     try {
       await store.dispatch(
         authApi.endpoints.refreshToken.initiate(undefined, { forceRefetch: true })
       );
-    } catch (error) {
-      console.error('Token refresh failed:', error);
-    }
-
-    try {
+      
       await store.dispatch(
         authApi.endpoints.loadUser.initiate(undefined, { forceRefetch: true })
       );
     } catch (error) {
-      console.error('Load user failed:', error);
+      
     }
   }
 };
 
 if (typeof window !== 'undefined') {
-  initializeApp();
+  setTimeout(() => {
+    initializeApp();
+  }, 100);
 }

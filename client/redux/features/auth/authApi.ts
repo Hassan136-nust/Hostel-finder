@@ -40,7 +40,6 @@ export const authApi = apiSlice.injectEndpoints({
             })
           );
         } catch (error) {
-          // Handle error silently
         }
       },
     }),
@@ -54,7 +53,6 @@ export const authApi = apiSlice.injectEndpoints({
           await queryFulfilled;
           dispatch(userLoggedOut());
         } catch (error) {
-           // Handle error silently
         }
       },
     }),
@@ -73,7 +71,7 @@ export const authApi = apiSlice.injectEndpoints({
             })
           );
         } catch (error) {
-           // Handle error silently
+          dispatch(userLoggedOut());
         }
       },
     }),
@@ -92,7 +90,7 @@ export const authApi = apiSlice.injectEndpoints({
             })
           );
         } catch (error) {
-           // Handle error silently
+          dispatch(userLoggedOut());
         }
       },
     }),
