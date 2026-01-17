@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import Logo from "../../assets/logo.png";
 import { HiOutlineMenuAlt3, HiOutlineUserCircle, HiX } from "react-icons/hi";
 import { navItems } from "../utils/navItems";
 import { ThemeSwitcher } from "../utils/ThemeSwitcher";
@@ -44,7 +45,7 @@ const Header = () => {
         <Link href="/" className="flex items-center gap-2 group">
           <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-brand-primary dark:bg-dark-primary flex items-center justify-center transition-transform group-hover:scale-105">
             <Image 
-              src="/next.svg" 
+              src={Logo} 
               alt="Logo"
               width={28}
               height={28}
