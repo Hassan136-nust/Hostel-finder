@@ -199,8 +199,6 @@ export const updateAccessToken = CatchAsyncError(
     try {
       const refresh_token = req.cookies.refresh_token;
 
-      console.log("Refresh token received:", refresh_token ? "Yes" : "No"); 
-
       if (!refresh_token) {
         return next(new ErrorHandler("Please login to access this resource", 400));
       }
@@ -212,7 +210,6 @@ export const updateAccessToken = CatchAsyncError(
           process.env.REFRESH_TOKEN as string
         ) as JwtPayload;
       } catch (error: any) {
-        console.log("Token verification error:", error.message); 
         return next(new ErrorHandler("Invalid or expired refresh token", 400));
       }
 
@@ -220,12 +217,9 @@ export const updateAccessToken = CatchAsyncError(
         return next(new ErrorHandler("Invalid token structure", 400));
       }
 
-      console.log("Decoded user id:", decoded.id); 
-
       const session = await redis.get(decoded.id);
 
       if (!session) {
-        console.log("No session found in Redis for user:", decoded.id); 
         return next(new ErrorHandler("Please login to access this resource", 400));
       }
 
@@ -234,8 +228,6 @@ export const updateAccessToken = CatchAsyncError(
       if (!user || !user._id) {
         return next(new ErrorHandler("Invalid session data", 400));
       }
-
-      console.log("User found:", user.email); 
 
       const accessToken = jwt.sign(
         { id: user._id },
@@ -256,20 +248,16 @@ export const updateAccessToken = CatchAsyncError(
 
       await redis.set(user._id, JSON.stringify(user), "EX", 604800);
 
-      console.log("Tokens refreshed successfully for:", user.email); 
-
       res.status(200).json({
         success: true,
         status: "Success",
         accessToken,
       });
     } catch (error: any) {
-      console.log("Refresh token error:", error); 
       return next(new ErrorHandler(error.message, 400));
     }
   }
 );
-
 export const getUserInfo = CatchAsyncError(async (req:Request,res:Response,next:NextFunction)=>{
     try{
         const userId = req.user?._id.toString();

@@ -52,14 +52,19 @@ const Header = () => {
             <Image
               src={Logo}
               alt="Logo"
-              width={28}
-              height={28}
+              width={68}
+              height={68}
               className="object-contain invert dark:invert-0"
             />
           </div>
-          <span className="font-heading font-bold text-2xl tracking-tight text-brand-primary dark:text-dark-text">
+          <div className="flex flex-col">
+          <span className="font-bold text-2xl tracking-tight text-brand-primary dark:text-dark-text">
             HOSTELITE
           </span>
+           <span className="text-1xl tracking-tight text-brand-primary dark:text-dark-text">
+            <i>Beyond Ordinary</i>
+          </span>
+          </div>
         </Link>
 
         <nav className="hidden md:flex items-center gap-10">

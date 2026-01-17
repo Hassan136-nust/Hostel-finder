@@ -11,7 +11,11 @@ export const ThemeSwitcher = () => {
   useEffect(() => setMounted(true), []);
 
   if (!mounted) {
-    return <div className="w-9 h-9 mx-4" />; 
+    return (
+      <div className="mx-4">
+        <div className="h-9 w-9 rounded-full bg-brand-card/20 dark:bg-dark-card/50" />
+      </div>
+    );
   }
 
   return (
@@ -35,7 +39,7 @@ export const ThemeSwitcher = () => {
           className={`absolute transition-all duration-500 transform ${
             theme === "light"
               ? "-rotate-90 scale-0 opacity-0"
-              : "rotate-0 scale-100 opacity-100 text-blue-500"
+              : "rotate-0 scale-100 opacity-100 text-white"
           }`}
         />
       </button>

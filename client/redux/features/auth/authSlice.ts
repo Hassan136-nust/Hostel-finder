@@ -17,10 +17,32 @@ interface IAuthState {
   user: IUser | null;
 }
 
-const initialState: IAuthState = {
-  token: "",
-  user: null,
+const loadState = (): IAuthState => {
+    if (typeof window === 'undefined') {
+        return { token: "", user: null };
+    }
+    try {
+        const serializedState = localStorage.getItem('authState');
+        if (serializedState === null) {
+            return { token: "", user: null };
+        }
+        return JSON.parse(serializedState);
+    } catch (err) {
+        return { token: "", user: null };
+    }
 };
+
+const saveState = (state: IAuthState) => {
+    if (typeof window === 'undefined') return;
+    try {
+        const serializedState = JSON.stringify(state);
+        localStorage.setItem('authState', serializedState);
+    } catch (err) {
+        console.error('Could not save state', err);
+    }
+};
+
+const initialState: IAuthState = loadState();
 
 const authSlice = createSlice({
   name: "auth",
@@ -28,14 +50,19 @@ const authSlice = createSlice({
   reducers: {
     userRegistration: (state, action: PayloadAction<{ token: string }>) => {
       state.token = action.payload.token;
+      saveState(state);
     },
     userLoggedIn: (state, action: PayloadAction<{ accessToken: string; user: IUser }>) => {
       state.token = action.payload.accessToken;
       state.user = action.payload.user;
+      saveState(state);
     },
     userLoggedOut: (state) => {
       state.token = "";
       state.user = null;
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('authState');
+      }
     },
   },
 });

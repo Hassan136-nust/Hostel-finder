@@ -15,12 +15,27 @@ export const store = configureStore({
 });
 
 const initializeApp = async () => {
-  await store.dispatch(
-    authApi.endpoints.refreshToken.initiate(undefined, { forceRefetch: true })
-  );
-  await store.dispatch(
-    authApi.endpoints.loadUser.initiate(undefined, { forceRefetch: true })
-  );
+  const state = store.getState();
+  
+  if (state.auth.user) {
+    try {
+      await store.dispatch(
+        authApi.endpoints.refreshToken.initiate(undefined, { forceRefetch: true })
+      );
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+    }
+
+    try {
+      await store.dispatch(
+        authApi.endpoints.loadUser.initiate(undefined, { forceRefetch: true })
+      );
+    } catch (error) {
+      console.error('Load user failed:', error);
+    }
+  }
 };
 
-initializeApp();
+if (typeof window !== 'undefined') {
+  initializeApp();
+}
