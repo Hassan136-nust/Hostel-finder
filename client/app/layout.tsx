@@ -28,26 +28,44 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             {children}
             <Toaster
-              position="top-right"
+              position="top-center"
+              reverseOrder={false}
+              gutter={12}
+              containerStyle={{
+                top: 40,
+              }}
               toastOptions={{
-                duration: 4000,
+                duration: 3000,
                 style: {
                   background: "#ffff",
                   color: "#000000",
-                  borderRadius: "14px",
-                  padding: "14px 16px",
+                  borderRadius: "16px",
+                  padding: "16px 24px",
                   fontWeight: "600",
+                  fontSize: "14px",
+                  boxShadow: "0 20px 40px rgba(44, 27, 19, 0.3)",
+                  border: "1px solid rgba(252, 242, 233, 0.1)",
+                  backdropFilter: "blur(10px)",
+                  maxWidth: "400px",
                 },
                 success: {
                   iconTheme: {
                     primary: "#22c55e",
-                    secondary: "#ffffff",
+                    secondary: "#fcf2e9",
+                  },
+                  style: {
+                    background: "#2c1b13",
+                    color: "#fcf2e9",
                   },
                 },
                 error: {
                   iconTheme: {
                     primary: "#ef4444",
-                    secondary: "#ffffff",
+                    secondary: "#fcf2e9",
+                  },
+                  style: {
+                    background: "#2c1b13",
+                    color: "#fcf2e9",
                   },
                 },
               }}

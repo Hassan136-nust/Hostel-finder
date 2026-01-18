@@ -12,7 +12,14 @@ import SignUp from "../Auth/Signup";
 import Verification from "../Auth/Verification";
 import { useSelector } from "react-redux";
 
-const DEFAULT_AVATAR = "/vercel.svg";
+const getInitials = (name: string) => {
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+};
 
 const Header = () => {
   const [active, setActive] = useState(false);
@@ -29,7 +36,6 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Handle body scroll lock for both Sidebar and Auth Modals
   useEffect(() => {
     if (open || openAuth) {
       document.body.style.overflow = "hidden";
@@ -83,17 +89,22 @@ const Header = () => {
         <div className="flex items-center gap-2">
           <ThemeSwitcher />
 
-          {/* Desktop User Icon / Avatar */}
           <div className="hidden md:block cursor-pointer">
             {user ? (
               <Link href={"/profile"}>
-                <Image
-                  src={user.avatar ? user.avatar.url : DEFAULT_AVATAR}
-                  alt="user"
-                  width={35}
-                  height={35}
-                  className="rounded-full border-2 border-brand-primary dark:border-dark-primary"
-                />
+                {user.avatar?.url ? (
+                  <Image
+                    src={user.avatar.url}
+                    alt="user"
+                    width={35}
+                    height={35}
+                    className="rounded-full border-2 border-brand-primary dark:border-dark-primary"
+                  />
+                ) : (
+                  <div className="w-[35px] h-[35px] rounded-full bg-[#2c1b13] dark:bg-[#fcf2e9] flex items-center justify-center text-[#fcf2e9] dark:text-[#2c1b13] text-sm font-bold border-2 border-brand-primary dark:border-dark-primary">
+                    {getInitials(user.name)}
+                  </div>
+                )}
               </Link>
             ) : (
               <div
@@ -119,7 +130,6 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Sidebar */}
       <div
         className={`fixed inset-0 h-screen w-full bg-brand-bg/60 dark:bg-dark-bg/60 backdrop-blur-lg z-[1000] transition-all duration-500 ease-in-out md:hidden ${
           open
@@ -129,17 +139,22 @@ const Header = () => {
       >
         <div className="flex flex-col h-full p-8">
           <div className="flex justify-between items-center mb-12">
-            {/* Mobile User Icon / Avatar */}
             <div className="cursor-pointer">
               {user ? (
                 <Link href={"/profile"} onClick={() => setOpen(false)}>
-                  <Image
-                    src={user.avatar ? user.avatar.url : DEFAULT_AVATAR}
-                    alt="user"
-                    width={40}
-                    height={40}
-                    className="rounded-full border-2 border-brand-primary dark:border-dark-primary"
-                  />
+                  {user.avatar?.url ? (
+                    <Image
+                      src={user.avatar.url}
+                      alt="user"
+                      width={40}
+                      height={40}
+                      className="rounded-full border-2 border-brand-primary dark:border-dark-primary"
+                    />
+                  ) : (
+                    <div className="w-[40px] h-[40px] rounded-full bg-[#2c1b13] dark:bg-[#fcf2e9] flex items-center justify-center text-[#fcf2e9] dark:text-[#2c1b13] text-base font-bold border-2 border-brand-primary dark:border-dark-primary">
+                      {getInitials(user.name)}
+                    </div>
+                  )}
                 </Link>
               ) : (
                 <div
