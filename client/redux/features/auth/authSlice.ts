@@ -10,6 +10,7 @@ interface IUser {
         public_id: string;
         url: string;
     };
+    hostelRequestStatus?: "none" | "pending" | "approved" | "rejected";
 }
 
 interface IAuthState {
