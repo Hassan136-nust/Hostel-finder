@@ -24,8 +24,7 @@ import {
     HiOutlineQuestionMarkCircle,
     HiOutlinePaperAirplane,
     HiOutlineMap,
-    HiOutlineShare,
-    HiOutlineHeart
+    HiOutlineShare
 } from "react-icons/hi";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
@@ -150,11 +149,15 @@ const HostelDetailPage = () => {
                 </div>
 
                 <div className="absolute top-24 right-6 md:right-12 z-10 flex gap-2">
-                    <button className="p-3 rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-white/20 transition-all">
+                    <button 
+                        onClick={() => {
+                            navigator.clipboard.writeText(window.location.href);
+                            toast.success("Link copied to clipboard!");
+                        }}
+                        className="p-3 rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-white/20 transition-all"
+                        title="Share hostel"
+                    >
                         <HiOutlineShare size={20} />
-                    </button>
-                    <button className="p-3 rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-white/20 transition-all">
-                        <HiOutlineHeart size={20} />
                     </button>
                 </div>
 
