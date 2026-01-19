@@ -16,6 +16,16 @@ import {
 import { useGetMyHostelQuery, useCreateHostelMutation, useUpdateHostelMutation } from "@/redux/features/hostel/hostelApi";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const LocationPicker = dynamic(() => import("../../components/Dashboard/LocationPicker"), {
+    ssr: false,
+    loading: () => (
+        <div className="h-[400px] rounded-2xl bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 flex items-center justify-center">
+            <div className="w-8 h-8 border-4 border-[#2c1b13]/20 dark:border-[#fcf2e9]/20 border-t-[#2c1b13] dark:border-t-[#fcf2e9] rounded-full animate-spin" />
+        </div>
+    )
+});
 
 const HOSTEL_TYPES = ["Boys", "Girls", "Family"];
 
@@ -289,14 +299,20 @@ const MyHostelPage = () => {
                             />
                         </div>
 
-                        <div className="md:col-span-2 p-6 rounded-2xl bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 border-2 border-dashed border-[#2c1b13]/20 dark:border-[#fcf2e9]/20">
-                            <div className="flex items-center justify-center gap-3 text-[#2c1b13]/60 dark:text-[#fcf2e9]/60">
-                                <HiOutlineLocationMarker size={24} />
-                                <span className="font-medium">Google Maps integration coming soon</span>
-                            </div>
-                            <p className="text-center text-xs text-[#2c1b13]/40 dark:text-[#fcf2e9]/40 mt-2">
-                                Pin your exact location on the map
-                            </p>
+                        <div className="md:col-span-2">
+                            <label className="block text-xs font-bold uppercase tracking-wider text-[#2c1b13]/60 dark:text-[#fcf2e9]/60 mb-3">
+                                Pin Your Exact Location
+                            </label>
+                            <LocationPicker
+                                coordinates={formData.coordinates}
+                                onLocationChange={(coords, address) => {
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        coordinates: coords,
+                                        ...(address && { address })
+                                    }));
+                                }}
+                            />
                         </div>
                     </div>
                 </div>
