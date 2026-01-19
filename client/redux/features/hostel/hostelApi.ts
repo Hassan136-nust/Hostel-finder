@@ -58,6 +58,7 @@ export const {
   useCreateHostelMutation,
   useGetAllHostelsQuery,
   useGetMyHostelQuery,
+  useGetHostelByIdQuery,
   useUpdateHostelMutation,
   useDeleteHostelMutation,
 } = hostelApi;
