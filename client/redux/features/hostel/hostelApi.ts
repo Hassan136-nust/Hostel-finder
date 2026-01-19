@@ -14,7 +14,7 @@ export const hostelApi = apiSlice.injectEndpoints({
     // Get all hostels (public)
     getAllHostels: builder.query({
       query: () => ({
-        url: "get-all-hostels",
+        url: "hostels",
         method: "GET",
       }),
     }),
