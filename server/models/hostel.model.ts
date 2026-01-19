@@ -22,6 +22,7 @@ export interface IHostel extends Document {
   questions: mongoose.Types.ObjectId[]; 
   rating: number;
   isActive: boolean;
+  isFeatured: boolean;
 }
 
 const hostelSchema: Schema<IHostel> = new mongoose.Schema(
@@ -48,6 +49,7 @@ const hostelSchema: Schema<IHostel> = new mongoose.Schema(
     questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
     rating: { type: Number, default: 0 },
     isActive: { type: Boolean, default: true },
+    isFeatured: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

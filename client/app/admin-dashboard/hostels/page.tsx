@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { useGetAdminHostelsQuery, useAdminToggleHostelMutation } from "@/redux/features/admin/adminApi";
+import { useGetAdminHostelsQuery, useAdminToggleHostelMutation, useToggleFeaturedHostelMutation } from "@/redux/features/admin/adminApi";
 import {
     HiOutlineOfficeBuilding,
     HiOutlineEye,
     HiOutlineEyeOff,
     HiOutlineSearch,
-    HiOutlineLocationMarker
+    HiOutlineLocationMarker,
+    HiOutlineStar,
+    HiStar
 } from "react-icons/hi";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
@@ -15,6 +17,7 @@ import { toast } from "react-hot-toast";
 const AdminHostelsPage = () => {
     const { data, isLoading, refetch } = useGetAdminHostelsQuery(undefined);
     const [toggleHostel, { isLoading: isToggling }] = useAdminToggleHostelMutation();
+    const [toggleFeatured] = useToggleFeaturedHostelMutation();
     const [search, setSearch] = useState("");
     const [confirmModal, setConfirmModal] = useState<{ open: boolean; hostel: any; action: boolean }>({ open: false, hostel: null, action: true });
 
@@ -37,6 +40,16 @@ const AdminHostelsPage = () => {
             refetch();
         } catch (error: any) {
             toast.error(error?.data?.message || "Failed to update hostel");
+        }
+    };
+
+    const handleToggleFeatured = async (hostelId: string, isFeatured: boolean) => {
+        try {
+            await toggleFeatured({ hostelId, isFeatured: !isFeatured }).unwrap();
+            toast.success(isFeatured ? "Removed from featured" : "Added to featured!");
+            refetch();
+        } catch (error: any) {
+            toast.error(error?.data?.message || "Failed to update");
         }
     };
 
@@ -136,16 +149,29 @@ const AdminHostelsPage = () => {
                                             </span>
                                         </td>
                                         <td className="py-4 px-6 text-right">
-                                            <button
-                                                onClick={() => setConfirmModal({ open: true, hostel, action: !isActive })}
-                                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                                                    isActive 
-                                                        ? "bg-red-500/20 text-red-400 hover:bg-red-500/30" 
-                                                        : "bg-green-500/20 text-green-400 hover:bg-green-500/30"
-                                                }`}
-                                            >
-                                                {isActive ? "Deactivate" : "Activate"}
-                                            </button>
+                                            <div className="flex items-center justify-end gap-2">
+                                                <button
+                                                    onClick={() => handleToggleFeatured(hostel._id, hostel.isFeatured)}
+                                                    className={`p-2 rounded-lg transition-colors ${
+                                                        hostel.isFeatured 
+                                                            ? "bg-yellow-500/20 text-yellow-400" 
+                                                            : "bg-white/10 text-white/40 hover:bg-white/20"
+                                                    }`}
+                                                    title={hostel.isFeatured ? "Remove from Featured" : "Add to Featured"}
+                                                >
+                                                    {hostel.isFeatured ? <HiStar size={18} /> : <HiOutlineStar size={18} />}
+                                                </button>
+                                                <button
+                                                    onClick={() => setConfirmModal({ open: true, hostel, action: !isActive })}
+                                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                                        isActive 
+                                                            ? "bg-red-500/20 text-red-400 hover:bg-red-500/30" 
+                                                            : "bg-green-500/20 text-green-400 hover:bg-green-500/30"
+                                                    }`}
+                                                >
+                                                    {isActive ? "Deactivate" : "Activate"}
+                                                </button>
+                                            </div>
                                         </td>
                                     </motion.tr>
                                 );

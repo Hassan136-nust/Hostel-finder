@@ -6,6 +6,7 @@ import hostelModel from "../models/hostel.model";
 import roomModel from "../models/room.model";
 import reviewModel from "../models/review.model";
 import questionModel from "../models/question.model";
+import announcementModel from "../models/announcement.model";
 
 // Get admin dashboard stats
 export const getAdminStats = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
@@ -110,6 +111,48 @@ export const adminToggleHostelStatus = CatchAsyncError(async (req: Request, res:
     }
 });
 
+// Toggle hostel featured status
+export const toggleFeaturedHostel = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { hostelId, isFeatured } = req.body;
+
+        const hostel = await hostelModel.findById(hostelId);
+
+        if (!hostel) {
+            return next(new ErrorHandler("Hostel not found", 404));
+        }
+
+        hostel.isFeatured = isFeatured;
+        await hostel.save();
+
+        res.status(200).json({
+            success: true,
+            message: isFeatured ? "Hostel featured successfully" : "Hostel unfeatured successfully",
+            hostel
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
+// Get featured hostels (public)
+export const getFeaturedHostels = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const hostels = await hostelModel.find({ isFeatured: true, isActive: { $ne: false } })
+            .populate("reviews")
+            .limit(6);
+
+        res.status(200).json({
+            success: true,
+            hostels
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
 // Get pending manager requests
 export const getPendingRequests = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -183,3 +226,200 @@ export const getAdminUsers = CatchAsyncError(async (req: Request, res: Response,
         return next(new ErrorHandler(error.message, 500));
     }
 });
+
+// Get all reviews for moderation
+export const getAllReviews = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const reviews = await reviewModel.find()
+            .populate("user", "name email avatar")
+            .populate("hostel", "name")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            reviews
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
+// Delete review (admin)
+export const deleteReview = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { reviewId } = req.params;
+
+        const review = await reviewModel.findById(reviewId);
+
+        if (!review) {
+            return next(new ErrorHandler("Review not found", 404));
+        }
+
+        // Remove from hostel's reviews array
+        await hostelModel.findByIdAndUpdate(review.hostel, {
+            $pull: { reviews: reviewId }
+        });
+
+        await review.deleteOne();
+
+        res.status(200).json({
+            success: true,
+            message: "Review deleted successfully"
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
+// Get all questions for moderation
+export const getAllQuestions = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const questions = await questionModel.find()
+            .populate("user", "name email avatar")
+            .populate("hostel", "name")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            questions
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
+// Delete question (admin)
+export const deleteQuestion = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { questionId } = req.params;
+
+        const question = await questionModel.findById(questionId);
+
+        if (!question) {
+            return next(new ErrorHandler("Question not found", 404));
+        }
+
+        // Remove from hostel's questions array
+        await hostelModel.findByIdAndUpdate(question.hostel, {
+            $pull: { questions: questionId }
+        });
+
+        await question.deleteOne();
+
+        res.status(200).json({
+            success: true,
+            message: "Question deleted successfully"
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
+// Create announcement
+export const createAnnouncement = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { title, message, type } = req.body;
+
+        const announcement = await announcementModel.create({
+            title,
+            message,
+            type: type || "info",
+            createdBy: req.user?._id
+        });
+
+        res.status(201).json({
+            success: true,
+            message: "Announcement created successfully",
+            announcement
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
+// Get all announcements
+export const getAnnouncements = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const announcements = await announcementModel.find()
+            .populate("createdBy", "name")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            announcements
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
+// Get active announcements (public)
+export const getActiveAnnouncements = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const announcements = await announcementModel.find({ isActive: true })
+            .sort({ createdAt: -1 })
+            .limit(5);
+
+        res.status(200).json({
+            success: true,
+            announcements
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
+// Toggle announcement active status
+export const toggleAnnouncement = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { announcementId, isActive } = req.body;
+
+        const announcement = await announcementModel.findById(announcementId);
+
+        if (!announcement) {
+            return next(new ErrorHandler("Announcement not found", 404));
+        }
+
+        announcement.isActive = isActive;
+        await announcement.save();
+
+        res.status(200).json({
+            success: true,
+            message: isActive ? "Announcement activated" : "Announcement deactivated"
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
+// Delete announcement
+export const deleteAnnouncement = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { announcementId } = req.params;
+
+        const announcement = await announcementModel.findById(announcementId);
+
+        if (!announcement) {
+            return next(new ErrorHandler("Announcement not found", 404));
+        }
+
+        await announcement.deleteOne();
+
+        res.status(200).json({
+            success: true,
+            message: "Announcement deleted successfully"
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+

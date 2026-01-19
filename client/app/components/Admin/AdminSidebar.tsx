@@ -9,7 +9,9 @@ import {
     HiOutlineUsers,
     HiOutlineBell,
     HiOutlineX,
-    HiOutlineChartBar
+    HiOutlineChartBar,
+    HiOutlineShieldCheck,
+    HiOutlineSpeakerphone
 } from "react-icons/hi";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGetPendingRequestsQuery } from "@/redux/features/admin/adminApi";
@@ -45,6 +47,16 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen, setIsOpen }) => {
             href: "/admin-dashboard/requests",
             icon: HiOutlineBell,
             badge: pendingCount
+        },
+        {
+            title: "Moderation",
+            href: "/admin-dashboard/moderation",
+            icon: HiOutlineShieldCheck
+        },
+        {
+            title: "Announcements",
+            href: "/admin-dashboard/announcements",
+            icon: HiOutlineSpeakerphone
         }
     ];
 
