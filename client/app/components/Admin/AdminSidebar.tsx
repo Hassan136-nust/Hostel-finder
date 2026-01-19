@@ -11,7 +11,8 @@ import {
     HiOutlineX,
     HiOutlineChartBar,
     HiOutlineShieldCheck,
-    HiOutlineSpeakerphone
+    HiOutlineSpeakerphone,
+    HiOutlineCog
 } from "react-icons/hi";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGetPendingRequestsQuery } from "@/redux/features/admin/adminApi";
@@ -57,6 +58,11 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen, setIsOpen }) => {
             title: "Announcements",
             href: "/admin-dashboard/announcements",
             icon: HiOutlineSpeakerphone
+        },
+        {
+            title: "Platform Settings",
+            href: "/admin-dashboard/settings",
+            icon: HiOutlineCog
         }
     ];
 
