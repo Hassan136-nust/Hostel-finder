@@ -1,6 +1,7 @@
 import Hero from "./components/Home/Hero";
 import HostelGrid from "./components/Home/HostelGrid";
 import ReviewsSection from "./components/Home/ReviewsSection";
+import Footer from "./components/ui/Footer";
 import Header from "./components/ui/Header";
 
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
         <HostelGrid />
         <ReviewsSection />
       </main>
+      <Footer />
     </div>
   );
 }
