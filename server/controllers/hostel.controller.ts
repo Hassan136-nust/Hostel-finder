@@ -72,6 +72,21 @@ export const getAllHostels = CatchAsyncError(async (req: Request, res: Response,
     }
 });
 
+export const getMyHostel = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.user?._id;
+        const hostel = await hostelModel.findOne({ owner: userId }).populate("reviews");
+        
+        res.status(200).json({
+            success: true,
+            hostel
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
 
 export const updateHostel = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {

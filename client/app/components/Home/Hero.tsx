@@ -90,6 +90,7 @@ const Hero = () => {
             src={img} 
             alt={`Customer ${index + 1}`} 
             fill
+            sizes="56px"
             className="object-cover"
           />
         </div>

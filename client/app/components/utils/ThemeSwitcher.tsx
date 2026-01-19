@@ -23,7 +23,7 @@ export const ThemeSwitcher = () => {
       <button
         aria-label="Toggle Dark Mode"
         type="button"
-        className="relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-brand-card/20 dark:bg-dark-card/50 hover:bg-brand-card/40 dark:hover:bg-dark-card transition-all duration-300 focus:outline-none"
+        className="relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#2c1b13]/10 dark:bg-[#fcf2e9]/10 hover:bg-[#2c1b13]/20 dark:hover:bg-[#fcf2e9]/20 transition-all duration-300 focus:outline-none"
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       >
         <BiSun
@@ -31,7 +31,7 @@ export const ThemeSwitcher = () => {
           className={`absolute transition-all duration-500 transform ${
             theme === "dark"
               ? "rotate-90 scale-0 opacity-0"
-              : "rotate-0 scale-100 opacity-100 text-yellow-500"
+              : "rotate-0 scale-100 opacity-100 text-[#2c1b13]"
           }`}
         />
         <BiMoon
@@ -39,7 +39,7 @@ export const ThemeSwitcher = () => {
           className={`absolute transition-all duration-500 transform ${
             theme === "light"
               ? "-rotate-90 scale-0 opacity-0"
-              : "rotate-0 scale-100 opacity-100 text-white"
+              : "rotate-0 scale-100 opacity-100 text-[#fcf2e9]"
           }`}
         />
       </button>
