@@ -66,3 +66,116 @@ export const getHostelRooms = CatchAsyncError(async (req: Request, res: Response
         return next(new ErrorHandler(error.message, 500));
     }
 });
+
+export const updateRoom = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const { type, price, description, amenities, images } = req.body;
+
+        const room = await roomModel.findById(id);
+        if (!room) {
+            return next(new ErrorHandler("Room not found", 404));
+        }
+
+        const hostel = await hostelModel.findById(room.hostel);
+        if (!hostel || hostel.owner.toString() !== req.user?._id.toString()) {
+            return next(new ErrorHandler("You are not authorized to update this room", 403));
+        }
+
+        if (type) room.type = type;
+        if (price) room.price = price;
+        if (description) room.description = description;
+        if (amenities) room.amenities = amenities;
+
+        if (images && images.length > 0) {
+            for (const img of room.images) {
+                if (img.public_id) {
+                    await cloudinary.uploader.destroy(img.public_id);
+                }
+            }
+
+            const imageLinks = [];
+            for (let i = 0; i < images.length; i++) {
+                const result = await cloudinary.uploader.upload(images[i], {
+                    folder: "rooms",
+                });
+                imageLinks.push({
+                    public_id: result.public_id,
+                    url: result.secure_url,
+                });
+            }
+            room.images = imageLinks;
+        }
+
+        await room.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Room updated successfully!",
+            room
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
+export const deleteRoom = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+
+        const room = await roomModel.findById(id);
+        if (!room) {
+            return next(new ErrorHandler("Room not found", 404));
+        }
+
+        const hostel = await hostelModel.findById(room.hostel);
+        if (!hostel || hostel.owner.toString() !== req.user?._id.toString()) {
+            return next(new ErrorHandler("You are not authorized to delete this room", 403));
+        }
+
+        for (const img of room.images) {
+            if (img.public_id) {
+                await cloudinary.uploader.destroy(img.public_id);
+            }
+        }
+
+        await roomModel.findByIdAndDelete(id);
+
+        res.status(200).json({
+            success: true,
+            message: "Room deleted successfully!"
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
+export const toggleRoomAvailability = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+
+        const room = await roomModel.findById(id);
+        if (!room) {
+            return next(new ErrorHandler("Room not found", 404));
+        }
+
+        const hostel = await hostelModel.findById(room.hostel);
+        if (!hostel || hostel.owner.toString() !== req.user?._id.toString()) {
+            return next(new ErrorHandler("You are not authorized to update this room", 403));
+        }
+
+        room.isAvailable = !room.isAvailable;
+        await room.save();
+
+        res.status(200).json({
+            success: true,
+            message: `Room marked as ${room.isAvailable ? "available" : "unavailable"}`,
+            room
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
