@@ -8,6 +8,7 @@ import hostelRouter from './routes/hostel.route';
 import roomRouter from './routes/room.routes';
 import reviewRouter from './routes/review.routes';
 import questionRouter from './routes/question.routes';
+import favoritesRouter from './routes/favorites.routes';
 import socialRouter from './routes/social.route';
 import { apiLimiter, authLimiter } from './middlewares/rateLimter';
 import layoutRouter from './routes/layout.route';
@@ -33,6 +34,7 @@ app.use('/api/v1' , hostelRouter)
 app.use('/api/v1' , roomRouter)
 app.use('/api/v1' , reviewRouter)
 app.use('/api/v1' , questionRouter)
+app.use('/api/v1' , favoritesRouter)
 app.use('/api/v1' , socialRouter)
 app.use('/api/v1' , layoutRouter)
 app.use('/api/v1' , analyticsRouter)

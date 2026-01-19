@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useGetHostelByIdQuery } from "@/redux/features/hostel/hostelApi";
+import { useCheckFavoriteQuery, useAddToFavoritesMutation, useRemoveFromFavoritesMutation } from "@/redux/features/favorites/favoritesApi";
 import { useSelector } from "react-redux";
 import Header from "../../../../components/ui/Header";
 import Footer from "../../../../components/ui/Footer";
@@ -16,20 +17,28 @@ import {
     HiOutlineChevronLeft,
     HiOutlineChevronRight,
     HiOutlineLocationMarker,
-    HiOutlineOfficeBuilding
+    HiOutlineOfficeBuilding,
+    HiOutlineHeart,
+    HiHeart
 } from "react-icons/hi";
 import { motion } from "framer-motion";
+import { toast } from "react-hot-toast";
 
 const RoomDetailPage = () => {
     const params = useParams();
     const hostelId = params?.id as string;
     const roomId = params?.roomId as string;
+    const { user } = useSelector((state: any) => state.auth);
     
     const { data, isLoading } = useGetHostelByIdQuery(hostelId, { skip: !hostelId });
+    const { data: favoriteData, refetch: refetchFavorite } = useCheckFavoriteQuery(roomId, { skip: !roomId || !user });
+    const [addToFavorites, { isLoading: isAdding }] = useAddToFavoritesMutation();
+    const [removeFromFavorites, { isLoading: isRemoving }] = useRemoveFromFavoritesMutation();
 
     const hostel = data?.hostel;
     const rooms = data?.rooms || [];
     const room = rooms.find((r: any) => r._id === roomId);
+    const isFavorite = favoriteData?.isFavorite || false;
 
     const [currentImage, setCurrentImage] = useState(0);
 
@@ -38,6 +47,25 @@ const RoomDetailPage = () => {
 
     const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
     const prevImage = () => setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
+
+    const handleToggleFavorite = async () => {
+        if (!user) {
+            toast.error("Please login to add favorites");
+            return;
+        }
+        try {
+            if (isFavorite) {
+                await removeFromFavorites(roomId).unwrap();
+                toast.success("Removed from favorites");
+            } else {
+                await addToFavorites({ roomId }).unwrap();
+                toast.success("Added to favorites!");
+            }
+            refetchFavorite();
+        } catch (error: any) {
+            toast.error(error?.data?.message || "Something went wrong");
+        }
+    };
 
     if (isLoading) {
         return (
@@ -102,7 +130,15 @@ const RoomDetailPage = () => {
                     </Link>
                 </div>
 
-                <div className="absolute top-24 right-6 md:right-12 z-10">
+                <div className="absolute top-24 right-6 md:right-12 z-10 flex items-center gap-3">
+                    <button
+                        onClick={handleToggleFavorite}
+                        disabled={isAdding || isRemoving}
+                        className={`p-3 rounded-full backdrop-blur-md transition-all ${isFavorite ? "bg-red-500 text-white" : "bg-white/10 text-white hover:bg-white/20"}`}
+                        title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                    >
+                        {isFavorite ? <HiHeart size={22} /> : <HiOutlineHeart size={22} />}
+                    </button>
                     <span className={`px-5 py-2.5 rounded-full text-sm font-bold ${room.isAvailable ? "bg-green-500 text-white" : "bg-red-500 text-white"}`}>
                         {room.isAvailable ? "✓ Available for Booking" : "✗ Currently Booked"}
                     </span>
