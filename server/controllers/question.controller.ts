@@ -62,3 +62,23 @@ export const getHostelQuestions = CatchAsyncError(async (req: Request, res: Resp
         return next(new ErrorHandler(error.message, 500));
     }
 });
+
+// Get user's own questions
+export const getUserQuestions = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.user?._id;
+
+        const questions = await questionModel.find({ user: userId })
+            .populate("hostel", "name city images")
+            .populate("replies.user", "name")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            questions
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});

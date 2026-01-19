@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { HiOutlineArrowLeft, HiPencil, HiLogout, HiCamera, HiX, HiCheck, HiOfficeBuilding, HiCog, HiSparkles } from "react-icons/hi";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLogoutQuery } from "@/redux/features/auth/authApi";
+import UserActivitySection from "../components/Profile/UserActivitySection";
 import {
   useUpdateUserInfoMutation,
   useUpdateAvatarMutation,
@@ -469,6 +470,8 @@ const ProfilePage = () => {
                     </Link>
                   </motion.div>
                 )}
+
+                <UserActivitySection />
 
                 <div className="flex justify-center">
                   <button

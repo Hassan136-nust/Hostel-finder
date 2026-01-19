@@ -19,6 +19,14 @@ export const reviewApi = apiSlice.injectEndpoints({
         })
     }),
 
+    // Get user's own reviews
+    getMyReviews: builder.query({
+        query: () => ({
+            url: "my-reviews",
+            method: "GET"
+        })
+    }),
+
     // Reply to review
     replyToReview: builder.mutation({
         query: (data) => ({
@@ -33,5 +41,7 @@ export const reviewApi = apiSlice.injectEndpoints({
 export const {
     useAddReviewMutation,
     useGetHostelReviewsQuery,
+    useGetMyReviewsQuery,
     useReplyToReviewMutation
 } = reviewApi;
+

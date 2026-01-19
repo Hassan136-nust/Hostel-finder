@@ -85,3 +85,22 @@ export const replyToReview = CatchAsyncError(async (req: Request, res: Response,
         return next(new ErrorHandler(error.message, 500));
     }
 });
+
+// Get user's own reviews
+export const getUserReviews = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.user?._id;
+
+        const reviews = await reviewModel.find({ user: userId })
+            .populate("hostel", "name city images")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            reviews
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});

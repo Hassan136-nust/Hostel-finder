@@ -26,6 +26,14 @@ export const questionApi = apiSlice.injectEndpoints({
             url: `get-hostel-questions/${hostelId}`,
             method: "GET"
         })
+    }),
+
+    // Get user's own questions
+    getMyQuestions: builder.query({
+        query: () => ({
+            url: "my-questions",
+            method: "GET"
+        })
     })
   }),
 });
@@ -33,5 +41,7 @@ export const questionApi = apiSlice.injectEndpoints({
 export const {
     useAskQuestionMutation,
     useAnswerQuestionMutation,
-    useGetHostelQuestionsQuery
+    useGetHostelQuestionsQuery,
+    useGetMyQuestionsQuery
 } = questionApi;
+
