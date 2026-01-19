@@ -4,6 +4,9 @@ import React, { useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useGetHostelByIdQuery } from "@/redux/features/hostel/hostelApi";
+import { useGetHostelReviewsQuery, useAddReviewMutation } from "@/redux/features/review/reviewApi";
+import { useGetHostelQuestionsQuery, useAskQuestionMutation } from "@/redux/features/questions/questionApi";
+import { useSelector } from "react-redux";
 import Header from "../../components/ui/Header";
 import Footer from "../../components/ui/Footer";
 import { 
@@ -15,26 +18,46 @@ import {
     HiOutlineCheck,
     HiOutlineArrowLeft,
     HiOutlineKey,
-    HiOutlineCurrencyDollar
+    HiOutlineCurrencyDollar,
+    HiOutlineChatAlt2,
+    HiOutlineQuestionMarkCircle,
+    HiOutlinePaperAirplane
 } from "react-icons/hi";
 import { motion } from "framer-motion";
+import { toast } from "react-hot-toast";
 
 const ROOM_TYPES = ["All", "Single", "Double", "Three Seater", "Four Seater"];
 
 const HostelDetailPage = () => {
     const params = useParams();
     const hostelId = params?.id as string;
+    const { user } = useSelector((state: any) => state.auth);
     
-    const { data, isLoading } = useGetHostelByIdQuery(hostelId, {
+    const { data, isLoading, refetch: refetchHostel } = useGetHostelByIdQuery(hostelId, {
+        skip: !hostelId
+    });
+    const { data: reviewsData, refetch: refetchReviews } = useGetHostelReviewsQuery(hostelId, {
+        skip: !hostelId
+    });
+    const { data: questionsData, refetch: refetchQuestions } = useGetHostelQuestionsQuery(hostelId, {
         skip: !hostelId
     });
 
+    const [addReview, { isLoading: isAddingReview }] = useAddReviewMutation();
+    const [askQuestion, { isLoading: isAskingQuestion }] = useAskQuestionMutation();
+
     const hostel = data?.hostel;
     const rooms = data?.rooms || [];
+    const reviews = reviewsData?.reviews || [];
+    const questions = questionsData?.questions || [];
 
     const [selectedImage, setSelectedImage] = useState(0);
     const [selectedRoomType, setSelectedRoomType] = useState("All");
     const [showAvailableOnly, setShowAvailableOnly] = useState(false);
+    const [activeTab, setActiveTab] = useState<"rooms" | "reviews" | "questions">("rooms");
+
+    const [reviewForm, setReviewForm] = useState({ rating: 5, comment: "" });
+    const [questionForm, setQuestionForm] = useState("");
 
     const filteredRooms = useMemo(() => {
         return rooms.filter((room: any) => {
@@ -51,6 +74,53 @@ const HostelDetailPage = () => {
     const minPrice = rooms.length > 0 
         ? Math.min(...rooms.map((r: any) => r.price)) 
         : 0;
+
+    const handleSubmitReview = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!user) {
+            toast.error("Please login to add a review");
+            return;
+        }
+        if (!reviewForm.comment.trim()) {
+            toast.error("Please write a comment");
+            return;
+        }
+        try {
+            await addReview({
+                hostelId,
+                rating: reviewForm.rating,
+                comment: reviewForm.comment
+            }).unwrap();
+            toast.success("Review added successfully!");
+            setReviewForm({ rating: 5, comment: "" });
+            refetchReviews();
+        } catch (error: any) {
+            toast.error(error?.data?.message || "Failed to add review");
+        }
+    };
+
+    const handleAskQuestion = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!user) {
+            toast.error("Please login to ask a question");
+            return;
+        }
+        if (!questionForm.trim()) {
+            toast.error("Please enter your question");
+            return;
+        }
+        try {
+            await askQuestion({
+                hostelId,
+                question: questionForm
+            }).unwrap();
+            toast.success("Question submitted successfully!");
+            setQuestionForm("");
+            refetchQuestions();
+        } catch (error: any) {
+            toast.error(error?.data?.message || "Failed to submit question");
+        }
+    };
 
     if (isLoading) {
         return (
@@ -218,18 +288,37 @@ const HostelDetailPage = () => {
                         </motion.div>
                     </div>
 
-                    <section className="mt-16">
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-                            <div>
-                                <h2 className="text-2xl md:text-3xl font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9]">
-                                    Available Rooms
-                                </h2>
-                                <p className="text-[#2c1b13]/60 dark:text-[#fcf2e9]/60 mt-1">
-                                    {filteredRooms.length} room{filteredRooms.length !== 1 ? 's' : ''} found
-                                </p>
-                            </div>
+                    <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+                        {[
+                            { id: "rooms", label: "Rooms", icon: HiOutlineKey, count: rooms.length },
+                            { id: "reviews", label: "Reviews", icon: HiOutlineStar, count: reviews.length },
+                            { id: "questions", label: "Q&A", icon: HiOutlineQuestionMarkCircle, count: questions.length }
+                        ].map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id as any)}
+                                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all whitespace-nowrap ${
+                                    activeTab === tab.id
+                                        ? "bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13]"
+                                        : "bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 text-[#2c1b13] dark:text-[#fcf2e9] hover:bg-[#2c1b13]/10"
+                                }`}
+                            >
+                                <tab.icon size={18} />
+                                {tab.label}
+                                <span className={`px-2 py-0.5 rounded-full text-xs ${
+                                    activeTab === tab.id 
+                                        ? "bg-[#fcf2e9]/20 dark:bg-[#2c1b13]/20" 
+                                        : "bg-[#2c1b13]/10 dark:bg-[#fcf2e9]/10"
+                                }`}>
+                                    {tab.count}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
 
-                            <div className="flex flex-wrap items-center gap-3">
+                    {activeTab === "rooms" && (
+                        <section>
+                            <div className="flex flex-wrap items-center gap-3 mb-6">
                                 <div className="flex gap-2">
                                     {ROOM_TYPES.map((type) => (
                                         <button
@@ -238,7 +327,7 @@ const HostelDetailPage = () => {
                                             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                                                 selectedRoomType === type
                                                     ? "bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13]"
-                                                    : "bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 text-[#2c1b13] dark:text-[#fcf2e9] hover:bg-[#2c1b13]/10 dark:hover:bg-[#fcf2e9]/10"
+                                                    : "bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 text-[#2c1b13] dark:text-[#fcf2e9] hover:bg-[#2c1b13]/10"
                                             }`}
                                         >
                                             {type}
@@ -255,90 +344,201 @@ const HostelDetailPage = () => {
                                     <span className="text-sm text-[#2c1b13] dark:text-[#fcf2e9]">Available only</span>
                                 </label>
                             </div>
-                        </div>
 
-                        {filteredRooms.length === 0 ? (
-                            <div className="text-center py-16 bg-white dark:bg-[#2c1b13] rounded-3xl">
-                                <HiOutlineKey size={48} className="mx-auto text-[#2c1b13]/20 dark:text-[#fcf2e9]/20 mb-4" />
-                                <h3 className="text-xl font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-2">
-                                    No Rooms Found
-                                </h3>
-                                <p className="text-[#2c1b13]/60 dark:text-[#fcf2e9]/60">
-                                    Try adjusting your filters
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {filteredRooms.map((room: any, index: number) => (
-                                    <motion.div
-                                        key={room._id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: index * 0.05 }}
-                                        className="bg-white dark:bg-[#2c1b13] rounded-3xl overflow-hidden shadow-lg border border-[#2c1b13]/5 dark:border-white/5"
-                                    >
-                                        <div className="relative h-48 bg-[#2c1b13]/10 dark:bg-[#fcf2e9]/10">
-                                            {room.images?.[0] ? (
-                                                <img 
-                                                    src={room.images[0].url} 
-                                                    alt={room.type}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center">
-                                                    <HiOutlinePhotograph size={40} className="text-[#2c1b13]/20 dark:text-[#fcf2e9]/20" />
-                                                </div>
-                                            )}
-                                            <div className="absolute top-3 right-3">
-                                                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                                                    room.isAvailable 
-                                                        ? "bg-green-500 text-white" 
-                                                        : "bg-red-500 text-white"
-                                                }`}>
-                                                    {room.isAvailable ? "Available" : "Booked"}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <div className="p-5">
-                                            <div className="flex items-center justify-between mb-3">
-                                                <h3 className="text-lg font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9]">
-                                                    {room.type}
-                                                </h3>
-                                                <div className="flex items-center gap-1 text-[#2c1b13] dark:text-[#fcf2e9]">
-                                                    <HiOutlineCurrencyDollar size={16} />
-                                                    <span className="font-bold">{room.price.toLocaleString()}</span>
-                                                    <span className="text-xs opacity-60">/mo</span>
+                            {filteredRooms.length === 0 ? (
+                                <div className="text-center py-16 bg-white dark:bg-[#2c1b13] rounded-3xl">
+                                    <HiOutlineKey size={48} className="mx-auto text-[#2c1b13]/20 dark:text-[#fcf2e9]/20 mb-4" />
+                                    <h3 className="text-xl font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-2">No Rooms Found</h3>
+                                    <p className="text-[#2c1b13]/60 dark:text-[#fcf2e9]/60">Try adjusting your filters</p>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {filteredRooms.map((room: any, index: number) => (
+                                        <motion.div
+                                            key={room._id}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: index * 0.05 }}
+                                            className="bg-white dark:bg-[#2c1b13] rounded-3xl overflow-hidden shadow-lg border border-[#2c1b13]/5 dark:border-white/5"
+                                        >
+                                            <div className="relative h-48 bg-[#2c1b13]/10 dark:bg-[#fcf2e9]/10">
+                                                {room.images?.[0] ? (
+                                                    <img src={room.images[0].url} alt={room.type} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center">
+                                                        <HiOutlinePhotograph size={40} className="text-[#2c1b13]/20 dark:text-[#fcf2e9]/20" />
+                                                    </div>
+                                                )}
+                                                <div className="absolute top-3 right-3">
+                                                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${room.isAvailable ? "bg-green-500 text-white" : "bg-red-500 text-white"}`}>
+                                                        {room.isAvailable ? "Available" : "Booked"}
+                                                    </span>
                                                 </div>
                                             </div>
+                                            <div className="p-5">
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <h3 className="text-lg font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9]">{room.type}</h3>
+                                                    <div className="flex items-center gap-1 text-[#2c1b13] dark:text-[#fcf2e9]">
+                                                        <HiOutlineCurrencyDollar size={16} />
+                                                        <span className="font-bold">{room.price.toLocaleString()}</span>
+                                                        <span className="text-xs opacity-60">/mo</span>
+                                                    </div>
+                                                </div>
+                                                <p className="text-sm text-[#2c1b13]/70 dark:text-[#fcf2e9]/70 line-clamp-2 mb-4">{room.description}</p>
+                                                {room.amenities?.length > 0 && (
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {room.amenities.slice(0, 4).map((amenity: string, i: number) => (
+                                                            <span key={i} className="px-2 py-0.5 rounded bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 text-xs text-[#2c1b13]/70 dark:text-[#fcf2e9]/70">{amenity}</span>
+                                                        ))}
+                                                        {room.amenities.length > 4 && <span className="text-xs text-[#2c1b13]/40 dark:text-[#fcf2e9]/40">+{room.amenities.length - 4}</span>}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            )}
+                        </section>
+                    )}
 
-                                            <p className="text-sm text-[#2c1b13]/70 dark:text-[#fcf2e9]/70 line-clamp-2 mb-4">
-                                                {room.description}
-                                            </p>
+                    {activeTab === "reviews" && (
+                        <section className="space-y-8">
+                            <form onSubmit={handleSubmitReview} className="bg-white dark:bg-[#2c1b13] rounded-3xl p-6 border border-[#2c1b13]/5 dark:border-white/5">
+                                <h3 className="font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-4">Write a Review</h3>
+                                <div className="flex gap-2 mb-4">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <button
+                                            key={star}
+                                            type="button"
+                                            onClick={() => setReviewForm(prev => ({ ...prev, rating: star }))}
+                                            className="p-1"
+                                        >
+                                            <HiOutlineStar 
+                                                size={28} 
+                                                className={star <= reviewForm.rating ? "fill-yellow-400 text-yellow-400" : "text-[#2c1b13]/20 dark:text-[#fcf2e9]/20"} 
+                                            />
+                                        </button>
+                                    ))}
+                                </div>
+                                <textarea
+                                    value={reviewForm.comment}
+                                    onChange={(e) => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
+                                    placeholder="Share your experience..."
+                                    rows={3}
+                                    className="w-full px-4 py-3 rounded-xl bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 border border-[#2c1b13]/10 dark:border-[#fcf2e9]/10 text-[#2c1b13] dark:text-[#fcf2e9] placeholder:text-[#2c1b13]/40 dark:placeholder:text-[#fcf2e9]/40 focus:outline-none resize-none mb-4"
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={isAddingReview}
+                                    className="px-6 py-3 rounded-xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] font-bold hover:scale-105 transition-transform disabled:opacity-50 flex items-center gap-2"
+                                >
+                                    {isAddingReview ? <div className="w-5 h-5 border-2 border-current/30 border-t-current rounded-full animate-spin" /> : <HiOutlinePaperAirplane size={18} />}
+                                    Submit Review
+                                </button>
+                            </form>
 
-                                            {room.amenities && room.amenities.length > 0 && (
-                                                <div className="flex flex-wrap gap-1.5">
-                                                    {room.amenities.slice(0, 4).map((amenity: string, i: number) => (
-                                                        <span 
-                                                            key={i}
-                                                            className="px-2 py-0.5 rounded bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 text-xs text-[#2c1b13]/70 dark:text-[#fcf2e9]/70"
-                                                        >
-                                                            {amenity}
-                                                        </span>
-                                                    ))}
-                                                    {room.amenities.length > 4 && (
-                                                        <span className="text-xs text-[#2c1b13]/40 dark:text-[#fcf2e9]/40">
-                                                            +{room.amenities.length - 4}
-                                                        </span>
+                            {reviews.length === 0 ? (
+                                <div className="text-center py-16 bg-white dark:bg-[#2c1b13] rounded-3xl">
+                                    <HiOutlineChatAlt2 size={48} className="mx-auto text-[#2c1b13]/20 dark:text-[#fcf2e9]/20 mb-4" />
+                                    <h3 className="text-xl font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-2">No Reviews Yet</h3>
+                                    <p className="text-[#2c1b13]/60 dark:text-[#fcf2e9]/60">Be the first to share your experience!</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {reviews.map((review: any) => (
+                                        <div key={review._id} className="bg-white dark:bg-[#2c1b13] rounded-2xl p-6 border border-[#2c1b13]/5 dark:border-white/5">
+                                            <div className="flex items-start gap-4">
+                                                <div className="w-12 h-12 rounded-full bg-[#2c1b13]/10 dark:bg-[#fcf2e9]/10 flex items-center justify-center shrink-0">
+                                                    {review.user?.avatar?.url ? (
+                                                        <img src={review.user.avatar.url} alt="" className="w-full h-full rounded-full object-cover" />
+                                                    ) : (
+                                                        <span className="text-lg font-bold text-[#2c1b13] dark:text-[#fcf2e9]">{review.user?.name?.[0] || "U"}</span>
                                                     )}
                                                 </div>
+                                                <div className="flex-1">
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <h4 className="font-bold text-[#2c1b13] dark:text-[#fcf2e9]">{review.user?.name || "Anonymous"}</h4>
+                                                        <div className="flex gap-0.5">
+                                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                                <HiOutlineStar key={star} size={14} className={star <= review.rating ? "fill-yellow-400 text-yellow-400" : "text-[#2c1b13]/20"} />
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-[#2c1b13]/80 dark:text-[#fcf2e9]/80">{review.comment}</p>
+                                                    {review.reply && (
+                                                        <div className="mt-4 p-4 rounded-xl bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5">
+                                                            <p className="text-xs font-bold text-[#2c1b13]/60 dark:text-[#fcf2e9]/60 mb-1">Manager Reply:</p>
+                                                            <p className="text-sm text-[#2c1b13]/80 dark:text-[#fcf2e9]/80">{review.reply.message}</p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </section>
+                    )}
+
+                    {activeTab === "questions" && (
+                        <section className="space-y-8">
+                            <form onSubmit={handleAskQuestion} className="bg-white dark:bg-[#2c1b13] rounded-3xl p-6 border border-[#2c1b13]/5 dark:border-white/5">
+                                <h3 className="font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-4">Ask a Question</h3>
+                                <div className="flex gap-3">
+                                    <input
+                                        type="text"
+                                        value={questionForm}
+                                        onChange={(e) => setQuestionForm(e.target.value)}
+                                        placeholder="What would you like to know about this hostel?"
+                                        className="flex-1 px-4 py-3 rounded-xl bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 border border-[#2c1b13]/10 dark:border-[#fcf2e9]/10 text-[#2c1b13] dark:text-[#fcf2e9] placeholder:text-[#2c1b13]/40 dark:placeholder:text-[#fcf2e9]/40 focus:outline-none"
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={isAskingQuestion}
+                                        className="px-6 py-3 rounded-xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] font-bold hover:scale-105 transition-transform disabled:opacity-50 flex items-center gap-2"
+                                    >
+                                        {isAskingQuestion ? <div className="w-5 h-5 border-2 border-current/30 border-t-current rounded-full animate-spin" /> : <HiOutlinePaperAirplane size={18} />}
+                                        Ask
+                                    </button>
+                                </div>
+                            </form>
+
+                            {questions.length === 0 ? (
+                                <div className="text-center py-16 bg-white dark:bg-[#2c1b13] rounded-3xl">
+                                    <HiOutlineQuestionMarkCircle size={48} className="mx-auto text-[#2c1b13]/20 dark:text-[#fcf2e9]/20 mb-4" />
+                                    <h3 className="text-xl font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-2">No Questions Yet</h3>
+                                    <p className="text-[#2c1b13]/60 dark:text-[#fcf2e9]/60">Be the first to ask a question!</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {questions.map((q: any) => (
+                                        <div key={q._id} className="bg-white dark:bg-[#2c1b13] rounded-2xl p-6 border border-[#2c1b13]/5 dark:border-white/5">
+                                            <div className="flex items-start gap-3 mb-4">
+                                                <HiOutlineQuestionMarkCircle size={24} className="text-blue-500 shrink-0 mt-0.5" />
+                                                <div>
+                                                    <p className="font-bold text-[#2c1b13] dark:text-[#fcf2e9]">{q.question}</p>
+                                                    <p className="text-xs text-[#2c1b13]/40 dark:text-[#fcf2e9]/40 mt-1">Asked by {q.user?.name || "Anonymous"}</p>
+                                                </div>
+                                            </div>
+                                            {q.replies && q.replies.length > 0 && (
+                                                <div className="pl-8 space-y-3">
+                                                    {q.replies.map((reply: any, i: number) => (
+                                                        <div key={i} className="p-4 rounded-xl bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5">
+                                                            <p className="text-sm text-[#2c1b13]/80 dark:text-[#fcf2e9]/80">{reply.answer}</p>
+                                                            <p className="text-xs text-[#2c1b13]/40 dark:text-[#fcf2e9]/40 mt-2">— {reply.user?.name || "Manager"}</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            {(!q.replies || q.replies.length === 0) && (
+                                                <p className="pl-8 text-sm text-[#2c1b13]/40 dark:text-[#fcf2e9]/40 italic">Waiting for response...</p>
                                             )}
                                         </div>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        )}
-                    </section>
+                                    ))}
+                                </div>
+                            )}
+                        </section>
+                    )}
                 </div>
             </main>
 
