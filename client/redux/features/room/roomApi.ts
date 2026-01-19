@@ -2,7 +2,6 @@ import { apiSlice } from "../api/apiSlice";
 
 export const roomApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    // Create new room
     createRoom: builder.mutation({
       query: (data) => ({
         url: "create-room",
@@ -11,16 +10,13 @@ export const roomApi = apiSlice.injectEndpoints({
       }),
     }),
     
-    // Get all rooms for a hostel
     getHostelRooms: builder.query({
       query: (hostelId) => ({
-        url: `get-hostel-rooms/${hostelId}`,
+        url: `hostel-rooms/${hostelId}`,
         method: "GET",
       }),
     }),
 
-    // Update room details (Placeholder - Endpoint needs implementation in backend if not exists)
-    // Assuming backend will have update-room/:id route
     updateRoom: builder.mutation({
       query: ({ id, data }) => ({
         url: `update-room/${id}`,
@@ -29,12 +25,17 @@ export const roomApi = apiSlice.injectEndpoints({
       }),
     }),
 
-    // Delete room (Placeholder - Endpoint needs implementation in backend if not exists)
-     // Assuming backend will have delete-room/:id route
     deleteRoom: builder.mutation({
       query: (id) => ({
         url: `delete-room/${id}`,
         method: "DELETE",
+      }),
+    }),
+
+    toggleRoomAvailability: builder.mutation({
+      query: (id) => ({
+        url: `toggle-availability/${id}`,
+        method: "PUT",
       }),
     }),
   }),
@@ -45,4 +46,6 @@ export const {
   useGetHostelRoomsQuery,
   useUpdateRoomMutation,
   useDeleteRoomMutation,
+  useToggleRoomAvailabilityMutation,
 } = roomApi;
+
