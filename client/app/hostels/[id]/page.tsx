@@ -426,9 +426,9 @@ const HostelDetailPage = () => {
                                                                     <p className="font-bold text-[#2c1b13] dark:text-[#fcf2e9]">{q.question}</p>
                                                                     <p className="text-xs opacity-50 mt-1">by {q.user?.name || "Anonymous"}</p>
                                                                     {q.replies?.length > 0 && q.replies.map((a: any, i: number) => (
-                                                                        <div key={i} className="mt-3 p-3 rounded-xl bg-white dark:bg-[#2c1b13]">
-                                                                            <p className="text-sm text-[#2c1b13]/80 dark:text-[#fcf2e9]/80">{a.answer}</p>
-                                                                            <p className="text-xs opacity-50 mt-1">— {a.user?.name || "Manager"}</p>
+                                                                        <div key={i} className="mt-3 p-3 rounded-xl bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500">
+                                                                            <p className="text-xs font-bold text-green-700 dark:text-green-400 mb-1">✓ Hostel Response</p>
+                                                                            <p className="text-sm text-green-800 dark:text-green-300">{a.answer}</p>
                                                                         </div>
                                                                     ))}
                                                                     {(!q.replies || q.replies.length === 0) && <p className="mt-2 text-sm opacity-40 italic">Awaiting response...</p>}
