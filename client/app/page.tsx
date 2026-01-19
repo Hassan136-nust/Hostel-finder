@@ -3,6 +3,7 @@ import HostelGrid from "./components/Home/HostelGrid";
 import FeaturedHostels from "./components/Home/FeaturedHostels";
 import AnnouncementsBanner from "./components/Home/AnnouncementsBanner";
 import ReviewsSection from "./components/Home/ReviewsSection";
+import FAQ from "./components/Home/FAQ";
 import Footer from "./components/ui/Footer";
 import Header from "./components/ui/Header";
 
@@ -16,6 +17,7 @@ export default function Home() {
         <FeaturedHostels />
         <HostelGrid />
         <ReviewsSection />
+        <FAQ />
       </main>
       <Footer />
     </div>
