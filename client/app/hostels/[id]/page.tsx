@@ -390,7 +390,12 @@ const HostelDetailPage = () => {
                                                                         <div className="flex">{[1,2,3,4,5].map(s => <HiOutlineStar key={s} size={14} className={s <= r.rating ? "fill-yellow-400 text-yellow-400" : "opacity-20"} />)}</div>
                                                                     </div>
                                                                     <p className="mt-1 text-sm text-[#2c1b13]/80 dark:text-[#fcf2e9]/80">{r.comment}</p>
-                                                                    {r.reply && <div className="mt-3 p-3 rounded-xl bg-white dark:bg-[#2c1b13] text-sm"><span className="font-bold text-[#2c1b13]/60 dark:text-[#fcf2e9]/60">Manager: </span>{r.reply.message}</div>}
+                                                                    {r.reply && (
+                                                                        <div className="mt-3 p-3 rounded-xl bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500">
+                                                                            <p className="text-xs font-bold text-green-700 dark:text-green-400 mb-1">✓ Hostel Response</p>
+                                                                            <p className="text-sm text-green-800 dark:text-green-300">{r.reply.message}</p>
+                                                                        </div>
+                                                                    )}
                                                                 </div>
                                                             </div>
                                                         </div>
