@@ -5,7 +5,8 @@ import { useGetAdminUsersQuery } from "@/redux/features/admin/adminApi";
 import {
     HiOutlineUsers,
     HiOutlineSearch,
-    HiOutlineMail
+    HiOutlineMail,
+    HiOutlinePhone
 } from "react-icons/hi";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -19,7 +20,8 @@ const AdminUsersPage = () => {
 
     const filteredUsers = users.filter((user: any) => {
         const matchesSearch = user.name.toLowerCase().includes(search.toLowerCase()) ||
-            user.email.toLowerCase().includes(search.toLowerCase());
+            user.email.toLowerCase().includes(search.toLowerCase()) ||
+            (user.phone && user.phone.includes(search));
         const matchesRole = roleFilter === "all" || user.role === roleFilter;
         return matchesSearch && matchesRole;
     });
@@ -75,7 +77,7 @@ const AdminUsersPage = () => {
                         <thead>
                             <tr className="border-b border-white/10">
                                 <th className="text-left py-4 px-6 text-white/60 font-medium text-sm">User</th>
-                                <th className="text-left py-4 px-6 text-white/60 font-medium text-sm">Email</th>
+                                <th className="text-left py-4 px-6 text-white/60 font-medium text-sm">Contact</th>
                                 <th className="text-left py-4 px-6 text-white/60 font-medium text-sm">Role</th>
                                 <th className="text-left py-4 px-6 text-white/60 font-medium text-sm">Request Status</th>
                                 <th className="text-left py-4 px-6 text-white/60 font-medium text-sm">Joined</th>
@@ -109,10 +111,16 @@ const AdminUsersPage = () => {
                                         </div>
                                     </td>
                                     <td className="py-4 px-6">
-                                        <p className="text-white/60 flex items-center gap-1">
-                                            <HiOutlineMail size={14} />
-                                            {user.email}
-                                        </p>
+                                        <div className="space-y-1">
+                                            <p className="text-white/60 flex items-center gap-2 text-sm">
+                                                <HiOutlineMail size={14} />
+                                                {user.email}
+                                            </p>
+                                            <p className="text-white/60 flex items-center gap-2 text-sm">
+                                                <HiOutlinePhone size={14} />
+                                                {user.phone || "N/A"}
+                                            </p>
+                                        </div>
                                     </td>
                                     <td className="py-4 px-6">
                                         <span className={`px-3 py-1 rounded-full text-xs font-bold ${
