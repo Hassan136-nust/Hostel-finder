@@ -13,6 +13,7 @@ import socialRouter from './routes/social.route';
 import { apiLimiter, authLimiter } from './middlewares/rateLimter';
 import layoutRouter from './routes/layout.route';
 import analyticsRouter from './routes/analytics.route';
+import adminRouter from './routes/admin.routes';
 
 export const app = express();
 
@@ -38,6 +39,7 @@ app.use('/api/v1' , favoritesRouter)
 app.use('/api/v1' , socialRouter)
 app.use('/api/v1' , layoutRouter)
 app.use('/api/v1' , analyticsRouter)
+app.use('/api/v1/admin' , adminRouter)
 
 app.get('/api/v1/test' , (req:Request , res:Response , next:NextFunction) =>{
     res.status(200).json({
