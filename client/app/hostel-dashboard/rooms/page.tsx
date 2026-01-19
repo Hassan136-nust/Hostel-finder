@@ -15,6 +15,7 @@ import { useGetMyHostelQuery } from "@/redux/features/hostel/hostelApi";
 import { 
     useGetHostelRoomsQuery, 
     useCreateRoomMutation, 
+    useUpdateRoomMutation,
     useDeleteRoomMutation,
     useToggleRoomAvailabilityMutation 
 } from "@/redux/features/room/roomApi";
@@ -37,10 +38,12 @@ const RoomsPage = () => {
     });
 
     const [createRoom, { isLoading: isCreating }] = useCreateRoomMutation();
+    const [updateRoom, { isLoading: isUpdating }] = useUpdateRoomMutation();
     const [deleteRoom, { isLoading: isDeleting }] = useDeleteRoomMutation();
     const [toggleAvailability] = useToggleRoomAvailabilityMutation();
 
     const [showAddModal, setShowAddModal] = useState(false);
+    const [editRoom, setEditRoom] = useState<any>(null);
     const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
     const [formData, setFormData] = useState({
@@ -51,6 +54,7 @@ const RoomsPage = () => {
         images: [] as string[],
     });
     const [imagePreview, setImagePreview] = useState<string[]>([]);
+    const [existingImages, setExistingImages] = useState<{public_id: string, url: string}[]>([]);
 
     const rooms = roomsData?.rooms || [];
 
@@ -63,6 +67,26 @@ const RoomsPage = () => {
             images: [],
         });
         setImagePreview([]);
+        setExistingImages([]);
+    };
+
+    const openEditModal = (room: any) => {
+        setEditRoom(room);
+        setFormData({
+            type: room.type || "Single",
+            price: room.price?.toString() || "",
+            description: room.description || "",
+            amenities: room.amenities || [],
+            images: [],
+        });
+        setExistingImages(room.images || []);
+        setImagePreview([]);
+    };
+
+    const closeModal = () => {
+        setShowAddModal(false);
+        setEditRoom(null);
+        resetForm();
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -105,6 +129,10 @@ const RoomsPage = () => {
         setImagePreview(prev => prev.filter((_, i) => i !== index));
     };
 
+    const removeExistingImage = (index: number) => {
+        setExistingImages(prev => prev.filter((_, i) => i !== index));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -113,24 +141,36 @@ const RoomsPage = () => {
             return;
         }
 
-        if (formData.images.length === 0) {
+        const totalImages = formData.images.length + existingImages.length;
+        if (totalImages === 0) {
             toast.error("Please upload at least one image");
             return;
         }
 
         try {
-            await createRoom({
-                hostelId,
-                ...formData,
-                price: Number(formData.price)
-            }).unwrap();
+            if (editRoom) {
+                await updateRoom({
+                    id: editRoom._id,
+                    data: {
+                        ...formData,
+                        price: Number(formData.price),
+                        ...(formData.images.length > 0 && { images: formData.images })
+                    }
+                }).unwrap();
+                toast.success("Room updated successfully!");
+            } else {
+                await createRoom({
+                    hostelId,
+                    ...formData,
+                    price: Number(formData.price)
+                }).unwrap();
+                toast.success("Room added successfully!");
+            }
             
-            toast.success("Room added successfully!");
-            setShowAddModal(false);
-            resetForm();
+            closeModal();
             refetch();
         } catch (error: any) {
-            toast.error(error?.data?.message || "Failed to add room");
+            toast.error(error?.data?.message || `Failed to ${editRoom ? 'update' : 'add'} room`);
         }
     };
 
@@ -187,6 +227,9 @@ const RoomsPage = () => {
         );
     }
 
+    const isModalOpen = showAddModal || editRoom;
+    const isSubmitting = isCreating || isUpdating;
+
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -208,7 +251,7 @@ const RoomsPage = () => {
             </div>
 
             {rooms.length === 0 ? (
-                <div className="bg-[#fcf2e9] dark:bg-[#2c1b13] p-12 rounded-[2rem] border border-[#2c1b13]/10 dark:border-white/10 text-center">
+                <div className="bg-[#fcf2e9] dark:bg-[#2c1b13] p-12 rounded-4xl border border-[#2c1b13]/10 dark:border-white/10 text-center">
                     <HiOutlineKey size={64} className="mx-auto text-[#2c1b13]/20 dark:text-[#fcf2e9]/20 mb-4" />
                     <h3 className="text-xl font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-2">
                         No Rooms Yet
@@ -229,7 +272,7 @@ const RoomsPage = () => {
                     {rooms.map((room: any) => (
                         <div 
                             key={room._id} 
-                            className="bg-[#fcf2e9] dark:bg-[#2c1b13] rounded-[2rem] border border-[#2c1b13]/10 dark:border-white/10 overflow-hidden group"
+                            className="bg-[#fcf2e9] dark:bg-[#2c1b13] rounded-4xl border border-[#2c1b13]/10 dark:border-white/10 overflow-hidden group"
                         >
                             <div className="relative h-48 bg-[#2c1b13]/10 dark:bg-[#fcf2e9]/10">
                                 {room.images?.[0] ? (
@@ -287,11 +330,17 @@ const RoomsPage = () => {
 
                                 <div className="flex gap-2 pt-4 border-t border-[#2c1b13]/10 dark:border-white/10">
                                     <button
-                                        onClick={() => handleToggleAvailability(room._id)}
+                                        onClick={() => openEditModal(room)}
                                         className="flex-1 py-2.5 rounded-xl border border-[#2c1b13]/20 dark:border-[#fcf2e9]/20 text-sm font-bold text-[#2c1b13] dark:text-[#fcf2e9] hover:bg-[#2c1b13]/5 dark:hover:bg-[#fcf2e9]/5 transition-colors flex items-center justify-center gap-1"
                                     >
+                                        <HiOutlinePencil size={16} />
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => handleToggleAvailability(room._id)}
+                                        className="py-2.5 px-4 rounded-xl border border-[#2c1b13]/20 dark:border-[#fcf2e9]/20 text-sm font-bold text-[#2c1b13] dark:text-[#fcf2e9] hover:bg-[#2c1b13]/5 dark:hover:bg-[#fcf2e9]/5 transition-colors"
+                                    >
                                         <HiOutlineRefresh size={16} />
-                                        Toggle
                                     </button>
                                     <button
                                         onClick={() => setDeleteConfirm(room._id)}
@@ -306,15 +355,15 @@ const RoomsPage = () => {
                 </div>
             )}
 
-            {showAddModal && (
+            {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                    <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-[#fcf2e9] dark:bg-[#2c1b13] rounded-[2rem] p-8 shadow-2xl border border-[#2c1b13]/10 dark:border-white/10">
+                    <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-[#fcf2e9] dark:bg-[#2c1b13] rounded-4xl p-8 shadow-2xl border border-[#2c1b13]/10 dark:border-white/10">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-2xl font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9]">
-                                Add New Room
+                                {editRoom ? "Edit Room" : "Add New Room"}
                             </h2>
                             <button
-                                onClick={() => { setShowAddModal(false); resetForm(); }}
+                                onClick={closeModal}
                                 className="p-2 rounded-full hover:bg-[#2c1b13]/10 dark:hover:bg-[#fcf2e9]/10 transition-colors"
                             >
                                 <HiOutlineX size={24} className="text-[#2c1b13] dark:text-[#fcf2e9]" />
@@ -393,11 +442,29 @@ const RoomsPage = () => {
 
                             <div>
                                 <label className="block text-xs font-bold uppercase tracking-wider text-[#2c1b13]/60 dark:text-[#fcf2e9]/60 mb-3">
-                                    Images *
+                                    Images {!editRoom && "*"}
                                 </label>
                                 <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
+                                    {existingImages.map((img, index) => (
+                                        <div key={`existing-${index}`} className="relative aspect-square rounded-xl overflow-hidden group">
+                                            <img src={img.url} alt="" className="w-full h-full object-cover" />
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeExistingImage(index)}
+                                                    className="p-2 bg-red-500 text-white rounded-full"
+                                                >
+                                                    <HiOutlineX size={14} />
+                                                </button>
+                                            </div>
+                                            <span className="absolute bottom-1 left-1 px-1.5 py-0.5 bg-black/50 text-white text-[10px] rounded font-medium">
+                                                Current
+                                            </span>
+                                        </div>
+                                    ))}
+                                    
                                     {imagePreview.map((img, index) => (
-                                        <div key={index} className="relative aspect-square rounded-xl overflow-hidden group">
+                                        <div key={`new-${index}`} className="relative aspect-square rounded-xl overflow-hidden group">
                                             <img src={img} alt="" className="w-full h-full object-cover" />
                                             <button
                                                 type="button"
@@ -406,6 +473,9 @@ const RoomsPage = () => {
                                             >
                                                 <HiOutlineX size={12} />
                                             </button>
+                                            <span className="absolute bottom-1 left-1 px-1.5 py-0.5 bg-green-500 text-white text-[10px] rounded font-medium">
+                                                New
+                                            </span>
                                         </div>
                                     ))}
                                     
@@ -425,22 +495,22 @@ const RoomsPage = () => {
                             <div className="flex gap-4 pt-4">
                                 <button
                                     type="button"
-                                    onClick={() => { setShowAddModal(false); resetForm(); }}
+                                    onClick={closeModal}
                                     className="flex-1 py-4 rounded-xl border-2 border-[#2c1b13]/20 dark:border-[#fcf2e9]/20 font-bold text-[#2c1b13] dark:text-[#fcf2e9] hover:bg-[#2c1b13]/5 dark:hover:bg-[#fcf2e9]/5 transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    disabled={isCreating}
+                                    disabled={isSubmitting}
                                     className="flex-1 py-4 rounded-xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] font-bold hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                 >
-                                    {isCreating ? (
+                                    {isSubmitting ? (
                                         <div className="w-5 h-5 border-2 border-current/30 border-t-current rounded-full animate-spin" />
                                     ) : (
                                         <>
                                             <HiOutlineCheck size={20} />
-                                            Add Room
+                                            {editRoom ? "Update Room" : "Add Room"}
                                         </>
                                     )}
                                 </button>
@@ -452,7 +522,7 @@ const RoomsPage = () => {
 
             {deleteConfirm && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                    <div className="w-full max-w-md bg-[#fcf2e9] dark:bg-[#2c1b13] rounded-[2rem] p-8 shadow-2xl border border-[#2c1b13]/10 dark:border-white/10 text-center">
+                    <div className="w-full max-w-md bg-[#fcf2e9] dark:bg-[#2c1b13] rounded-4xl p-8 shadow-2xl border border-[#2c1b13]/10 dark:border-white/10 text-center">
                         <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/10 flex items-center justify-center">
                             <HiOutlineTrash size={32} className="text-red-500" />
                         </div>

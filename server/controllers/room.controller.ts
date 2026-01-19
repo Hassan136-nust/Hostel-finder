@@ -78,12 +78,16 @@ export const updateRoom = CatchAsyncError(async (req: Request, res: Response, ne
         }
 
         const hostel = await hostelModel.findById(room.hostel);
-        if (!hostel || hostel.owner.toString() !== req.user?._id.toString()) {
+        if (!hostel) {
+            return next(new ErrorHandler("Hostel not found", 404));
+        }
+        
+        if (hostel.owner.toString() !== req.user?._id.toString() && req.user?.role !== 'admin') {
             return next(new ErrorHandler("You are not authorized to update this room", 403));
         }
 
-        if (type) room.type = type;
-        if (price) room.price = price;
+        if (type) room.type = type as "Single" | "Double" | "Three Seater" | "Four Seater";
+        if (price !== undefined) room.price = price;
         if (description) room.description = description;
         if (amenities) room.amenities = amenities;
 
@@ -116,6 +120,7 @@ export const updateRoom = CatchAsyncError(async (req: Request, res: Response, ne
         });
 
     } catch (error: any) {
+        console.error("Update room error:", error);
         return next(new ErrorHandler(error.message, 500));
     }
 });
