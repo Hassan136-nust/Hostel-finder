@@ -17,6 +17,7 @@ export interface IUser extends Document {
     isActive:boolean;
     hostel?: mongoose.Types.ObjectId;
     hostelRequestStatus: "none" | "pending" | "approved" | "rejected";
+    favoriteRooms: mongoose.Types.ObjectId[];
     comparePassword: (password: string) => Promise<boolean>;
     SignAccessToken : ()=>string;
     SignRefreshToken : ()=>string;
@@ -75,7 +76,11 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
     type: String,
     enum: ["none", "pending", "approved", "rejected"],
     default: "none"
-    }
+    },
+    favoriteRooms: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Room"
+    }]
 
 }, { timestamps: true });
 
