@@ -19,14 +19,26 @@ const AdminHostelsPage = () => {
     const [toggleHostel, { isLoading: isToggling }] = useAdminToggleHostelMutation();
     const [toggleFeatured] = useToggleFeaturedHostelMutation();
     const [search, setSearch] = useState("");
+    const [filter, setFilter] = useState("all");
     const [confirmModal, setConfirmModal] = useState<{ open: boolean; hostel: any; action: boolean }>({ open: false, hostel: null, action: true });
 
     const hostels = data?.hostels || [];
 
-    const filteredHostels = hostels.filter((hostel: any) =>
-        hostel.name.toLowerCase().includes(search.toLowerCase()) ||
-        hostel.city.toLowerCase().includes(search.toLowerCase())
-    );
+    const filteredHostels = hostels.filter((hostel: any) => {
+        const matchesSearch = hostel.name.toLowerCase().includes(search.toLowerCase()) ||
+            hostel.city.toLowerCase().includes(search.toLowerCase());
+
+        if (!matchesSearch) return false;
+
+        if (filter === "all") return true;
+        if (filter === "boys") return hostel.type === "Boys";
+        if (filter === "girls") return hostel.type === "Girls";
+        if (filter === "active") return hostel.isActive !== false;
+        if (filter === "deactive") return hostel.isActive === false;
+        if (filter === "featured") return hostel.isFeatured === true;
+
+        return true;
+    });
 
     const handleToggle = async () => {
         if (!confirmModal.hostel) return;
@@ -61,27 +73,54 @@ const AdminHostelsPage = () => {
         );
     }
 
+    const filters = [
+        { id: "all", label: "All" },
+        { id: "boys", label: "Boys" },
+        { id: "girls", label: "Girls" },
+        { id: "active", label: "Active" },
+        { id: "deactive", label: "Inactive" },
+        { id: "featured", label: "Featured" },
+    ];
+
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-heading font-bold text-white">
-                        Manage Hostels
-                    </h1>
-                    <p className="text-white/60 mt-1">
-                        {hostels.length} hostels registered
-                    </p>
+            <div className="flex flex-col gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h1 className="text-3xl font-heading font-bold text-white">
+                            Manage Hostels
+                        </h1>
+                        <p className="text-white/60 mt-1">
+                            {hostels.length} hostels registered
+                        </p>
+                    </div>
+
+                    <div className="relative">
+                        <HiOutlineSearch size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" />
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Search hostels..."
+                            className="w-full sm:w-64 pl-12 pr-4 py-3 rounded-xl bg-[#1a1a2e] border border-white/10 text-white placeholder-white/40 focus:border-purple-500 focus:outline-none transition-colors"
+                        />
+                    </div>
                 </div>
 
-                <div className="relative">
-                    <HiOutlineSearch size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" />
-                    <input
-                        type="text"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Search hostels..."
-                        className="w-full sm:w-64 pl-12 pr-4 py-3 rounded-xl bg-[#1a1a2e] border border-white/10 text-white placeholder-white/40 focus:border-purple-500 focus:outline-none transition-colors"
-                    />
+                <div className="flex flex-wrap gap-2">
+                    {filters.map((f) => (
+                        <button
+                            key={f.id}
+                            onClick={() => setFilter(f.id)}
+                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+                                filter === f.id
+                                    ? "bg-purple-500 text-white"
+                                    : "bg-[#1a1a2e] text-white/60 hover:text-white border border-white/10"
+                            }`}
+                        >
+                            {f.label}
+                        </button>
+                    ))}
                 </div>
             </div>
 
