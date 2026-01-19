@@ -290,23 +290,67 @@ const HostelDetailPage = () => {
                                                     <p className="text-[#2c1b13]/60 dark:text-[#fcf2e9]/60">No rooms found</p>
                                                 </div>
                                             ) : (
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="grid grid-cols-1 gap-6">
                                                     {filteredRooms.map((room: any) => (
-                                                        <div key={room._id} className="flex gap-4 p-4 rounded-2xl bg-[#f8ede3] dark:bg-[#1a0f0a] border border-[#2c1b13]/5 dark:border-[#fcf2e9]/5">
-                                                            <div className="w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-[#2c1b13]/10">
-                                                                {room.images?.[0] ? <img src={room.images[0].url} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><HiOutlinePhotograph size={24} className="opacity-30" /></div>}
-                                                            </div>
-                                                            <div className="flex-1 min-w-0">
-                                                                <div className="flex items-center justify-between mb-1">
-                                                                    <h4 className="font-bold text-[#2c1b13] dark:text-[#fcf2e9]">{room.type}</h4>
-                                                                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${room.isAvailable ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                                                                        {room.isAvailable ? "Available" : "Booked"}
-                                                                    </span>
+                                                        <Link
+                                                            key={room._id}
+                                                            href={`/hostels/${hostelId}/rooms/${room._id}`}
+                                                            className="group block bg-[#f8ede3] dark:bg-[#1a0f0a] rounded-3xl overflow-hidden border border-[#2c1b13]/5 dark:border-[#fcf2e9]/5 hover:border-[#2c1b13]/20 dark:hover:border-[#fcf2e9]/20 hover:shadow-2xl transition-all"
+                                                        >
+                                                            <div className="flex flex-col md:flex-row">
+                                                                <div className="relative w-full md:w-72 h-52 md:h-auto shrink-0 overflow-hidden">
+                                                                    {room.images?.[0] ? (
+                                                                        <img src={room.images[0].url} alt={room.type} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                                                    ) : (
+                                                                        <div className="w-full h-full bg-[#2c1b13]/10 dark:bg-[#fcf2e9]/10 flex items-center justify-center">
+                                                                            <HiOutlinePhotograph size={48} className="opacity-30" />
+                                                                        </div>
+                                                                    )}
+                                                                    <div className="absolute top-4 left-4">
+                                                                        <span className={`px-4 py-2 rounded-full text-sm font-bold backdrop-blur-md ${room.isAvailable ? "bg-green-500/90 text-white" : "bg-red-500/90 text-white"}`}>
+                                                                            {room.isAvailable ? "✓ Available" : "Booked"}
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
-                                                                <p className="text-sm text-[#2c1b13]/60 dark:text-[#fcf2e9]/60 line-clamp-2">{room.description}</p>
-                                                                <p className="mt-2 font-bold text-[#2c1b13] dark:text-[#fcf2e9]">PKR {room.price.toLocaleString()}<span className="text-xs font-normal opacity-60">/mo</span></p>
+                                                                <div className="flex-1 p-6 flex flex-col justify-between">
+                                                                    <div>
+                                                                        <div className="flex items-start justify-between gap-4 mb-3">
+                                                                            <h3 className="text-2xl font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9]">
+                                                                                {room.type} Room
+                                                                            </h3>
+                                                                            <div className="text-right shrink-0">
+                                                                                <p className="text-2xl font-bold text-[#2c1b13] dark:text-[#fcf2e9]">
+                                                                                    PKR {room.price.toLocaleString()}
+                                                                                </p>
+                                                                                <span className="text-xs text-[#2c1b13]/60 dark:text-[#fcf2e9]/60">per month</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <p className="text-[#2c1b13]/70 dark:text-[#fcf2e9]/70 line-clamp-2 mb-4">
+                                                                            {room.description || "Comfortable room with all essential amenities included."}
+                                                                        </p>
+                                                                        {room.amenities?.length > 0 && (
+                                                                            <div className="flex flex-wrap gap-2 mb-4">
+                                                                                {room.amenities.slice(0, 5).map((a: string, i: number) => (
+                                                                                    <span key={i} className="px-3 py-1 rounded-full bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 text-xs font-medium text-[#2c1b13] dark:text-[#fcf2e9]">
+                                                                                        {a}
+                                                                                    </span>
+                                                                                ))}
+                                                                                {room.amenities.length > 5 && (
+                                                                                    <span className="px-3 py-1 rounded-full bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 text-xs font-medium text-[#2c1b13]/60 dark:text-[#fcf2e9]/60">
+                                                                                        +{room.amenities.length - 5} more
+                                                                                    </span>
+                                                                                )}
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="flex items-center justify-end pt-4 border-t border-[#2c1b13]/10 dark:border-[#fcf2e9]/10">
+                                                                        <span className="text-sm font-medium text-[#2c1b13]/60 dark:text-[#fcf2e9]/60 group-hover:text-[#2c1b13] dark:group-hover:text-[#fcf2e9] transition-colors">
+                                                                            View Room Details →
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        </Link>
                                                     ))}
                                                 </div>
                                             )}
