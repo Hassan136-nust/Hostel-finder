@@ -1,11 +1,12 @@
 
 import express from "express";
-import { createHostel, deleteHostel, getAllHostels, updateHostel, getMyHostel } from "../controllers/hostel.controller";
+import { createHostel, deleteHostel, getAllHostels, updateHostel, getMyHostel, getHostelById } from "../controllers/hostel.controller";
 import { authorizeRoles, isAuthenticated } from "../middlewares/auth";
 
 const hostelRouter = express.Router();
 
 hostelRouter.get("/hostels", getAllHostels);
+hostelRouter.get("/hostel/:id", getHostelById);
 hostelRouter.get("/get-my-hostel", isAuthenticated, authorizeRoles("manager", "admin"), getMyHostel);
 
 hostelRouter.post(

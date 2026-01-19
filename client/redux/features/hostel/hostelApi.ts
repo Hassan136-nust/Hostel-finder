@@ -27,6 +27,14 @@ export const hostelApi = apiSlice.injectEndpoints({
         })
     }),
 
+    // Get single hostel by ID (public)
+    getHostelById: builder.query({
+        query: (id) => ({
+            url: `hostel/${id}`,
+            method: "GET",
+        })
+    }),
+
     // Update hostel details
     updateHostel: builder.mutation({
       query: ({ id, data }) => ({
