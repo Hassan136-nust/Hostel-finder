@@ -24,7 +24,8 @@ import {
     HiOutlineQuestionMarkCircle,
     HiOutlinePaperAirplane,
     HiOutlineMap,
-    HiOutlineShare
+    HiOutlineShare,
+    HiOutlineEyeOff
 } from "react-icons/hi";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
@@ -120,6 +121,30 @@ const HostelDetailPage = () => {
                     <HiOutlineKey size={64} className="text-[#2c1b13]/20 dark:text-[#fcf2e9]/20 mb-4" />
                     <h2 className="text-2xl font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-2">Hostel Not Found</h2>
                     <Link href="/hostels" className="mt-4 px-6 py-3 rounded-xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] font-bold">Browse Hostels</Link>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
+
+    // Check if hostel is deactivated
+    if (data?.isDeactivated || hostel.isActive === false) {
+        return (
+            <div className="min-h-screen bg-[#fcf2e9] dark:bg-[#1a0f0a]">
+                <Header />
+                <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
+                    <div className="w-24 h-24 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-6">
+                        <HiOutlineEyeOff size={48} className="text-orange-600" />
+                    </div>
+                    <h2 className="text-2xl font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-2">
+                        Hostel Temporarily Unavailable
+                    </h2>
+                    <p className="text-[#2c1b13]/60 dark:text-[#fcf2e9]/60 mb-6 max-w-md">
+                        {hostel.name} is currently not accepting visitors. Please check back later or browse other hostels.
+                    </p>
+                    <Link href="/hostels" className="px-6 py-3 rounded-xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] font-bold hover:scale-105 transition-transform">
+                        Browse Other Hostels
+                    </Link>
                 </div>
                 <Footer />
             </div>

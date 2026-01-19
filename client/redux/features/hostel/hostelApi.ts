@@ -44,6 +44,15 @@ export const hostelApi = apiSlice.injectEndpoints({
       }),
     }),
 
+    // Toggle hostel active status
+    toggleHostelStatus: builder.mutation({
+      query: (data) => ({
+        url: "toggle-hostel-status",
+        method: "PUT",
+        body: data,
+      }),
+    }),
+
     // Delete hostel
     deleteHostel: builder.mutation({
       query: (id) => ({
@@ -60,5 +69,7 @@ export const {
   useGetMyHostelQuery,
   useGetHostelByIdQuery,
   useUpdateHostelMutation,
+  useToggleHostelStatusMutation,
   useDeleteHostelMutation,
 } = hostelApi;
+

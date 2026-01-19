@@ -1,6 +1,6 @@
 
 import express from "express";
-import { createHostel, deleteHostel, getAllHostels, updateHostel, getMyHostel, getHostelById } from "../controllers/hostel.controller";
+import { createHostel, deleteHostel, getAllHostels, updateHostel, getMyHostel, getHostelById, toggleHostelStatus } from "../controllers/hostel.controller";
 import { authorizeRoles, isAuthenticated } from "../middlewares/auth";
 
 const hostelRouter = express.Router();
@@ -21,6 +21,13 @@ hostelRouter.put(
     isAuthenticated,
     authorizeRoles("manager", "admin"),
     updateHostel
+);
+
+hostelRouter.put(
+    "/toggle-hostel-status",
+    isAuthenticated,
+    authorizeRoles("manager", "admin"),
+    toggleHostelStatus
 );
 
 hostelRouter.delete(

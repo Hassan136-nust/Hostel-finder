@@ -61,7 +61,8 @@ export const createHostel = CatchAsyncError(async (req: Request, res: Response, 
 
 export const getAllHostels = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const hostels = await hostelModel.find().populate("reviews"); 
+        // Only show active hostels in public listing
+        const hostels = await hostelModel.find({ isActive: { $ne: false } }).populate("reviews"); 
         
         res.status(200).json({
             success: true,
@@ -97,6 +98,21 @@ export const getHostelById = CatchAsyncError(async (req: Request, res: Response,
         
         if (!hostel) {
             return next(new ErrorHandler("Hostel not found", 404));
+        }
+
+        // Check if hostel is deactivated
+        if (hostel.isActive === false) {
+            return res.status(200).json({
+                success: true,
+                hostel: {
+                    _id: hostel._id,
+                    name: hostel.name,
+                    isActive: false
+                },
+                rooms: [],
+                isDeactivated: true,
+                message: "This hostel is currently unavailable"
+            });
         }
 
         const rooms = await roomModel.find({ hostel: id });
@@ -213,6 +229,32 @@ export const deleteHostel = CatchAsyncError(async (req: Request, res: Response, 
         res.status(200).json({
             success: true,
             message: "Hostel and all related data (rooms, reviews, questions) deleted successfully"
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
+// Toggle hostel active status
+export const toggleHostelStatus = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.user?._id;
+        const { isActive } = req.body;
+
+        const hostel = await hostelModel.findOne({ owner: userId });
+
+        if (!hostel) {
+            return next(new ErrorHandler("Hostel not found", 404));
+        }
+
+        hostel.isActive = isActive;
+        await hostel.save();
+
+        res.status(200).json({
+            success: true,
+            message: isActive ? "Hostel activated successfully" : "Hostel deactivated successfully",
+            hostel
         });
 
     } catch (error: any) {

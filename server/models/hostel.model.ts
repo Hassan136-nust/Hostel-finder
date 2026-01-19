@@ -20,7 +20,8 @@ export interface IHostel extends Document {
   contactPhone: string;
   reviews: mongoose.Types.ObjectId[]; 
   questions: mongoose.Types.ObjectId[]; 
-  rating: number; 
+  rating: number;
+  isActive: boolean;
 }
 
 const hostelSchema: Schema<IHostel> = new mongoose.Schema(
@@ -46,6 +47,7 @@ const hostelSchema: Schema<IHostel> = new mongoose.Schema(
     reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
     questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
     rating: { type: Number, default: 0 },
+    isActive: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
