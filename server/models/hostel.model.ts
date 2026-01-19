@@ -12,8 +12,12 @@ export interface IHostel extends Document {
     url: string;
   }[];
   facilities: string[];
+  tags: string[];
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
   contactPhone: string;
-
   reviews: mongoose.Types.ObjectId[]; 
   questions: mongoose.Types.ObjectId[]; 
   rating: number; 
@@ -33,11 +37,14 @@ const hostelSchema: Schema<IHostel> = new mongoose.Schema(
     type: { type: String, enum: ["Boys", "Girls", "Family"], required: true },
     images: [{ public_id: String, url: String }],
     facilities: [{ type: String }],
+    tags: [{ type: String }],
+    coordinates: {
+      lat: { type: Number },
+      lng: { type: Number }
+    },
     contactPhone: { type: String, required: true },
-
     reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
     questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
-
     rating: { type: Number, default: 0 },
   },
   { timestamps: true }
@@ -48,3 +55,4 @@ const hostelModel: Model<IHostel> = mongoose.model<IHostel>(
   hostelSchema
 );
 export default hostelModel;
+

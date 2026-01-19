@@ -12,7 +12,7 @@ import questionModel from "../models/question.model";
 
 export const createHostel = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { name, address, city, description, type, facilities, contactPhone, images } = req.body;
+        const { name, address, city, description, type, facilities, tags, coordinates, contactPhone, images } = req.body;
 
         if (!name || !address || !city || !description || !type || !contactPhone) {
             return next(new ErrorHandler("Please fill all required fields", 400));
@@ -41,6 +41,8 @@ export const createHostel = CatchAsyncError(async (req: Request, res: Response, 
             description,
             type,
             facilities,
+            tags,
+            coordinates,
             contactPhone,
             images: imageLinks,
             owner: req.user?._id 
@@ -91,7 +93,7 @@ export const getMyHostel = CatchAsyncError(async (req: Request, res: Response, n
 export const updateHostel = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
-        const { name, address, city, description, type, facilities, contactPhone, images } = req.body;
+        const { name, address, city, description, type, facilities, tags, coordinates, contactPhone, images } = req.body;
 
         const hostel = await hostelModel.findById(id);
 
@@ -109,6 +111,8 @@ export const updateHostel = CatchAsyncError(async (req: Request, res: Response, 
         if (description) hostel.description = description;
         if (type) hostel.type = type;
         if (facilities) hostel.facilities = facilities;
+        if (tags) hostel.tags = tags;
+        if (coordinates) hostel.coordinates = coordinates;
         if (contactPhone) hostel.contactPhone = contactPhone;
 
         if (images && images.length > 0) {
