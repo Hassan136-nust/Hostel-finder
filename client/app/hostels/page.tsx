@@ -20,7 +20,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import CompareButton from "../components/Comparison/CompareButton";
 
 import dynamic from "next/dynamic";
-import { HiOutlineMap, HiOutlineViewGrid } from "react-icons/hi";
+import { HiOutlineMap, HiOutlineViewGrid, HiOutlineScale } from "react-icons/hi";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleComparisonModal } from "@/redux/features/comparison/comparisonSlice";
 
 const HostelSearchMap = dynamic(() => import("../components/HostelSearchMap"), {
     ssr: false,
@@ -39,6 +41,8 @@ const PRICE_RANGES = [
 const FACILITIES = ["WiFi", "AC", "Mess", "Laundry", "Parking", "Gym", "Security", "Generator"];
 
 const HostelsPage = () => {
+    const dispatch = useDispatch();
+    const { selectedHostels } = useSelector((state: any) => state.comparison);
     const { data, isLoading } = useGetAllHostelsQuery({});
     const hostels = data?.hostels || [];
 
@@ -138,6 +142,25 @@ const HostelsPage = () => {
                                     placeholder="Search by hostel name, city, or area..."
                                     className="w-full pl-14 pr-5 py-5 rounded-2xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] placeholder:text-[#fcf2e9]/40 dark:placeholder:text-[#2c1b13]/40 shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#2c1b13]/50 dark:focus:ring-[#fcf2e9]/50 transition-all text-lg"
                                 />
+                            </div>
+
+                             {/* Comparison Button - Desktop */}
+                            <div className="hidden md:flex bg-[#2c1b13] dark:bg-[#fcf2e9] p-2 rounded-2xl shadow-2xl gap-2">
+                                <button
+                                    onClick={() => dispatch(toggleComparisonModal(true))}
+                                    className="flex items-center gap-2 px-4 py-3 rounded-xl transition-all font-bold text-[#fcf2e9]/70 dark:text-[#2c1b13]/70 hover:bg-[#fcf2e9]/10 dark:hover:bg-[#2c1b13]/10 hover:text-[#fcf2e9] dark:hover:text-[#2c1b13]"
+                                >
+                                    <div className="relative">
+                                        <HiOutlineScale size={20} />
+                                        {selectedHostels.length > 0 && (
+                                            <span className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 rounded-full text-[10px] flex items-center justify-center text-white">
+                                                {selectedHostels.length}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <span className="hidden xl:inline">Compare</span>
+                                </button>
+                                <div className="w-px bg-[#fcf2e9]/10 dark:bg-[#2c1b13]/10 my-2" />
                             </div>
 
                             {/* View Mode Toggle - Desktop */}
