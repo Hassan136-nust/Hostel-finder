@@ -219,10 +219,12 @@ const HostelsPage = () => {
                                         <select
                                             value={selectedCity}
                                             onChange={(e) => setSelectedCity(e.target.value)}
-                                            className="w-full px-4 py-3 rounded-xl bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 border border-[#2c1b13]/10 dark:border-[#fcf2e9]/10 text-[#2c1b13] dark:text-[#fcf2e9] focus:outline-none"
+                                            className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#2c1b13] border border-[#2c1b13]/10 dark:border-[#fcf2e9]/10 text-[#2c1b13] dark:text-[#fcf2e9] focus:outline-none appearance-none cursor-pointer"
                                         >
                                             {CITIES.map((city) => (
-                                                <option key={city} value={city}>{city}</option>
+                                                <option key={city} value={city} className="bg-white dark:bg-[#2c1b13] text-[#2c1b13] dark:text-[#fcf2e9]">
+                                                    {city}
+                                                </option>
                                             ))}
                                         </select>
                                     </div>
@@ -454,15 +456,17 @@ const HostelsPage = () => {
 
                                 <div>
                                     <h4 className="text-xs font-bold uppercase tracking-wider text-[#2c1b13]/60 dark:text-[#fcf2e9]/60 mb-3">City</h4>
-                                    <select
-                                        value={selectedCity}
-                                        onChange={(e) => setSelectedCity(e.target.value)}
-                                        className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#1a0f0a] border border-[#2c1b13]/10 dark:border-[#fcf2e9]/10 text-[#2c1b13] dark:text-[#fcf2e9]"
-                                    >
-                                        {CITIES.map((city) => (
-                                            <option key={city} value={city}>{city}</option>
-                                        ))}
-                                    </select>
+                                        <select
+                                            value={selectedCity}
+                                            onChange={(e) => setSelectedCity(e.target.value)}
+                                            className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#2c1b13] border border-[#2c1b13]/10 dark:border-[#fcf2e9]/10 text-[#2c1b13] dark:text-[#fcf2e9] focus:outline-none appearance-none cursor-pointer"
+                                        >
+                                            {CITIES.map((city) => (
+                                                <option key={city} value={city} className="bg-white dark:bg-[#2c1b13] text-[#2c1b13] dark:text-[#fcf2e9]">
+                                                    {city}
+                                                </option>
+                                            ))}
+                                        </select>
                                 </div>
 
                                 <div>
