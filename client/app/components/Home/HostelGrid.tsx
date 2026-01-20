@@ -11,6 +11,7 @@ import {
     HiOutlineOfficeBuilding
 } from "react-icons/hi";
 import { motion } from "framer-motion";
+import CompareButton from "@/app/components/Comparison/CompareButton";
 
 const HostelGrid = () => {
     const { data, isLoading } = useGetAllHostelsQuery({});
@@ -154,8 +155,13 @@ const HostelGrid = () => {
                                                         {hostel.minPrice && <span className="text-sm font-normal opacity-60">/mo</span>}
                                                     </p>
                                                 </div>
-                                                <div className="p-3 rounded-xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] group-hover:scale-110 transition-transform">
-                                                    <HiOutlineArrowRight size={18} />
+                                                <div className="flex items-center gap-2">
+                                                    <div onClick={(e) => e.preventDefault()} className="z-10 relative">
+                                                        <CompareButton hostel={hostel} />
+                                                    </div>
+                                                    <div className="p-3 rounded-xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] group-hover:scale-110 transition-transform">
+                                                        <HiOutlineArrowRight size={18} />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

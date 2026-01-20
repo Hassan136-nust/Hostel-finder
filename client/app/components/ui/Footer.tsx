@@ -66,15 +66,15 @@ const Footer = () => {
                         <div className="space-y-3">
                             <div className="flex items-center gap-3 text-[#fcf2e9]/60 dark:text-[#2c1b13]/60">
                                 <HiOutlineLocationMarker size={18} />
-                                <span className="text-sm">Islamabad, Pakistan</span>
+                                <span className="text-sm">Lahore, Pakistan</span>
                             </div>
                             <div className="flex items-center gap-3 text-[#fcf2e9]/60 dark:text-[#2c1b13]/60">
                                 <HiOutlineMail size={18} />
-                                <span className="text-sm">contact@hostelfinder.pk</span>
+                                <span className="text-sm">hjamal9865@gmail.com</span>
                             </div>
                             <div className="flex items-center gap-3 text-[#fcf2e9]/60 dark:text-[#2c1b13]/60">
                                 <HiOutlinePhone size={18} />
-                                <span className="text-sm">+92 300 1234567</span>
+                                <span className="text-sm">+92 318 1792848</span>
                             </div>
                         </div>
                     </div>

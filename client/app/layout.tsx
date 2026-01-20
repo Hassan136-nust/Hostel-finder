@@ -4,6 +4,8 @@ import { ThemeProvider } from "next-themes";
 import { Providers } from "./Provider";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
+import ComparisonBar from "./components/Comparison/ComparisonBar";
+import ComparisonModal from "./components/Comparison/ComparisonModal";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -27,6 +29,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Providers>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             {children}
+            <ComparisonBar />
+            <ComparisonModal />
             <Toaster
               position="top-center"
               reverseOrder={false}

@@ -17,6 +17,7 @@ import {
     HiOutlineAdjustments
 } from "react-icons/hi";
 import { motion, AnimatePresence } from "framer-motion";
+import CompareButton from "../components/Comparison/CompareButton";
 
 import dynamic from "next/dynamic";
 import { HiOutlineMap, HiOutlineViewGrid } from "react-icons/hi";
@@ -403,8 +404,13 @@ const HostelsPage = () => {
                                                                             {hostel.minPrice && <span className="text-xs font-normal opacity-60">/mo</span>}
                                                                         </p>
                                                                     </div>
-                                                                    <div className="p-2.5 rounded-xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] group-hover:scale-110 transition-transform">
-                                                                        <HiOutlineArrowRight size={16} />
+                                                                    <div className="flex items-center gap-2">
+                                                                        <div onClick={(e) => e.preventDefault()} className="z-10 relative">
+                                                                            <CompareButton hostel={hostel} />
+                                                                        </div>
+                                                                        <div className="p-2.5 rounded-xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] group-hover:scale-110 transition-transform">
+                                                                            <HiOutlineArrowRight size={16} />
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
