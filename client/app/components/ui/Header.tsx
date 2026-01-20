@@ -55,12 +55,12 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    if (open || openAuth) {
+    if (open || openAuth || showFavorites) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
-  }, [open, openAuth]);
+  }, [open, openAuth, showFavorites]);
 
   return (
     <>
@@ -126,79 +126,7 @@ const Header = () => {
                 )}
               </button>
 
-              {showFavorites && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setShowFavorites(false)} />
-                  <div className="absolute right-0 top-14 w-96 bg-white dark:bg-[#1a0f0a] rounded-3xl shadow-2xl border border-[#2c1b13]/10 dark:border-[#fcf2e9]/10 z-50 overflow-hidden">
-                    <div className="p-5 bg-gradient-to-r from-red-500 to-pink-500">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                          <HiHeart size={20} className="text-white" />
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-white text-lg">My Favorites</h3>
-                          <p className="text-white/80 text-sm">{favorites.length} room{favorites.length !== 1 ? 's' : ''} saved</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="max-h-80 overflow-y-auto">
-                      {favorites.length === 0 ? (
-                        <div className="p-8 text-center">
-                          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 flex items-center justify-center">
-                            <HiOutlineHeart size={32} className="text-[#2c1b13]/30 dark:text-[#fcf2e9]/30" />
-                          </div>
-                          <p className="font-medium text-[#2c1b13] dark:text-[#fcf2e9] mb-1">No favorites yet</p>
-                          <p className="text-sm text-[#2c1b13]/60 dark:text-[#fcf2e9]/60">Browse rooms and tap the heart to save them here</p>
-                        </div>
-                      ) : (
-                        <div className="p-3 space-y-2">
-                          {favorites.map((room: any) => (
-                            <div
-                              key={room._id}
-                              className="group relative bg-[#fcf2e9] dark:bg-[#2c1b13] rounded-2xl overflow-hidden hover:shadow-lg transition-all"
-                            >
-                              <Link
-                                href={`/hostels/${room.hostel?._id}/rooms/${room._id}`}
-                                onClick={() => setShowFavorites(false)}
-                                className="flex gap-4 p-3"
-                              >
-                                <div className="w-20 h-20 rounded-xl overflow-hidden bg-[#2c1b13]/10 shrink-0">
-                                  {room.images?.[0] ? (
-                                    <img src={room.images[0].url} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
-                                  ) : (
-                                    <div className="w-full h-full flex items-center justify-center">
-                                      <HiOutlineKey size={24} className="opacity-30" />
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="flex-1 min-w-0 py-1">
-                                  <p className="font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-1">{room.type} Room</p>
-                                  <p className="text-xs text-[#2c1b13]/60 dark:text-[#fcf2e9]/60 flex items-center gap-1 mb-2">
-                                    <HiOutlineLocationMarker size={12} />
-                                    {room.hostel?.name || 'Hostel'}
-                                  </p>
-                                  <p className="text-lg font-bold text-[#2c1b13] dark:text-[#fcf2e9]">
-                                    PKR {room.price?.toLocaleString()}
-                                    <span className="text-xs font-normal opacity-60">/mo</span>
-                                  </p>
-                                </div>
-                              </Link>
-                              <button
-                                onClick={(e) => handleRemoveFavorite(e, room._id)}
-                                className="absolute top-3 right-3 p-2 rounded-full bg-white dark:bg-[#1a0f0a] shadow-md opacity-0 group-hover:opacity-100 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
-                                title="Remove from favorites"
-                              >
-                                <HiOutlineTrash size={16} className="text-red-500" />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
+
             </div>
           )}
 
@@ -366,6 +294,101 @@ const Header = () => {
             </div>
           </div>
         </div>
+      )}
+
+
+      {/* Favorites Modal */}
+      {showFavorites && (
+        <>
+          {/* Backdrop with blur */}
+          <div 
+            className="fixed inset-0 z-[99998] bg-black/40 backdrop-blur-md" 
+            onClick={() => setShowFavorites(false)} 
+          />
+          
+          {/* Centered Modal */}
+          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 pointer-events-none">
+            <div 
+              className="w-full max-w-2xl bg-white dark:bg-[#1a0f0a] rounded-3xl shadow-2xl border border-[#2c1b13]/10 dark:border-[#fcf2e9]/10 overflow-hidden max-h-[85vh] pointer-events-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-5 bg-gradient-to-r from-red-500 to-pink-500">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                      <HiHeart size={20} className="text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-white text-lg">My Favorites</h3>
+                      <p className="text-white/80 text-sm">{favorites.length} room{favorites.length !== 1 ? 's' : ''} saved</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setShowFavorites(false)}
+                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                  >
+                    <HiX size={20} className="text-white" />
+                  </button>
+                </div>
+              </div>
+              
+              <div className="max-h-[calc(85vh-120px)] overflow-y-auto">
+                {favorites.length === 0 ? (
+                  <div className="p-8 text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 flex items-center justify-center">
+                      <HiOutlineHeart size={32} className="text-[#2c1b13]/30 dark:text-[#fcf2e9]/30" />
+                    </div>
+                    <p className="font-medium text-[#2c1b13] dark:text-[#fcf2e9] mb-1">No favorites yet</p>
+                    <p className="text-sm text-[#2c1b13]/60 dark:text-[#fcf2e9]/60">Browse rooms and tap the heart to save them here</p>
+                  </div>
+                ) : (
+                  <div className="p-3 space-y-2">
+                    {favorites.map((room: any) => (
+                      <div
+                        key={room._id}
+                        className="group relative bg-[#fcf2e9] dark:bg-[#2c1b13] rounded-2xl overflow-hidden hover:shadow-lg transition-all"
+                      >
+                        <Link
+                          href={`/hostels/${room.hostel?._id}/rooms/${room._id}`}
+                          onClick={() => setShowFavorites(false)}
+                          className="flex gap-4 p-3"
+                        >
+                          <div className="w-20 h-20 rounded-xl overflow-hidden bg-[#2c1b13]/10 shrink-0">
+                            {room.images?.[0] ? (
+                              <img src={room.images[0].url} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <HiOutlineKey size={24} className="opacity-30" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0 py-1">
+                            <p className="font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-1">{room.type} Room</p>
+                            <p className="text-xs text-[#2c1b13]/60 dark:text-[#fcf2e9]/60 flex items-center gap-1 mb-2">
+                              <HiOutlineLocationMarker size={12} />
+                              {room.hostel?.name || 'Hostel'}
+                            </p>
+                            <p className="text-lg font-bold text-[#2c1b13] dark:text-[#fcf2e9]">
+                              PKR {room.price?.toLocaleString()}
+                              <span className="text-xs font-normal opacity-60">/mo</span>
+                            </p>
+                          </div>
+                        </Link>
+                        <button
+                          onClick={(e) => handleRemoveFavorite(e, room._id)}
+                          className="absolute top-3 right-3 p-2 rounded-full bg-white dark:bg-[#1a0f0a] shadow-md opacity-0 group-hover:opacity-100 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
+                          title="Remove from favorites"
+                        >
+                          <HiOutlineTrash size={16} className="text-red-500" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </>
       )}
 
       {/* Auth Modals */}
