@@ -18,6 +18,14 @@ import {
 } from "react-icons/hi";
 import { motion, AnimatePresence } from "framer-motion";
 
+import dynamic from "next/dynamic";
+import { HiOutlineMap, HiOutlineViewGrid } from "react-icons/hi";
+
+const HostelSearchMap = dynamic(() => import("../components/HostelSearchMap"), {
+    ssr: false,
+    loading: () => <div className="w-full h-[600px] bg-gray-100 rounded-3xl animate-pulse" />
+});
+
 const HOSTEL_TYPES = ["All", "Boys", "Girls", "Family"];
 const CITIES = ["All Cities", "Islamabad", "Rawalpindi", "Lahore", "Karachi", "Peshawar", "Multan", "Faisalabad"];
 const PRICE_RANGES = [
@@ -34,6 +42,7 @@ const HostelsPage = () => {
     const hostels = data?.hostels || [];
 
     const [searchQuery, setSearchQuery] = useState("");
+    const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
     const [selectedType, setSelectedType] = useState("All");
     const [selectedCity, setSelectedCity] = useState("All Cities");
     const [selectedPriceRange, setSelectedPriceRange] = useState(0);
@@ -240,120 +249,156 @@ const HostelsPage = () => {
                                 <p className="text-[#2c1b13]/60 dark:text-[#fcf2e9]/60">
                                     Showing <span className="font-bold text-[#2c1b13] dark:text-[#fcf2e9]">{filteredHostels.length}</span> hostels
                                 </p>
-                            </div>
 
-                            {isLoading ? (
-                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                                    {[1, 2, 3, 4, 5, 6].map((i) => (
-                                        <div key={i} className="bg-white/50 dark:bg-black/20 rounded-3xl h-[380px] animate-pulse" />
-                                    ))}
-                                </div>
-                            ) : filteredHostels.length === 0 ? (
-                                <div className="text-center py-20 bg-white dark:bg-[#2c1b13] rounded-3xl">
-                                    <HiOutlineOfficeBuilding size={64} className="mx-auto text-[#2c1b13]/20 dark:text-[#fcf2e9]/20 mb-4" />
-                                    <h3 className="text-2xl font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-2">
-                                        No Hostels Found
-                                    </h3>
-                                    <p className="text-[#2c1b13]/60 dark:text-[#fcf2e9]/60 mb-6">
-                                        Try adjusting your filters or search query
-                                    </p>
+                                {/* View Mode Toggle */}
+                                <div className="flex bg-white dark:bg-[#2c1b13] p-1 rounded-xl shadow-sm border border-[#2c1b13]/5 dark:border-white/5">
                                     <button
-                                        onClick={clearFilters}
-                                        className="px-6 py-3 rounded-xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] font-bold hover:scale-105 transition-transform"
+                                        onClick={() => setViewMode('grid')}
+                                        className={`p-2 rounded-lg transition-all ${
+                                            viewMode === 'grid'
+                                                ? "bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] shadow-md"
+                                                : "text-[#2c1b13]/40 dark:text-[#fcf2e9]/40 hover:bg-[#2c1b13]/5 dark:hover:bg-[#fcf2e9]/5"
+                                        }`}
                                     >
-                                        Clear Filters
+                                        <HiOutlineViewGrid size={20} />
+                                    </button>
+                                    <button
+                                        onClick={() => setViewMode('map')}
+                                        className={`p-2 rounded-lg transition-all ${
+                                            viewMode === 'map'
+                                                ? "bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] shadow-md"
+                                                : "text-[#2c1b13]/40 dark:text-[#fcf2e9]/40 hover:bg-[#2c1b13]/5 dark:hover:bg-[#fcf2e9]/5"
+                                        }`}
+                                    >
+                                        <HiOutlineMap size={20} />
                                     </button>
                                 </div>
+                            </div>
+
+                            {viewMode === 'map' ? (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="h-[800px] w-full"
+                                >
+                                    <HostelSearchMap hostels={filteredHostels} />
+                                </motion.div>
                             ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                                    {filteredHostels.map((hostel: any, index: number) => (
-                                        <motion.div
-                                            key={hostel._id}
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: index * 0.05 }}
-                                        >
-                                            <Link href={`/hostels/${hostel._id}`}>
-                                                <div className="group bg-white dark:bg-[#2c1b13] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-[#2c1b13]/5 dark:border-white/5">
-                                                    <div className="relative h-52 overflow-hidden">
-                                                        {hostel.images?.[0] ? (
-                                                            <img 
-                                                                src={hostel.images[0].url} 
-                                                                alt={hostel.name}
-                                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                                            />
-                                                        ) : (
-                                                            <div className="w-full h-full bg-gradient-to-br from-[#2c1b13]/20 to-[#2c1b13]/10 flex items-center justify-center">
-                                                                <HiOutlineOfficeBuilding size={48} className="text-[#2c1b13]/30 dark:text-[#fcf2e9]/30" />
-                                                            </div>
-                                                        )}
-                                                        
-                                                        <div className="absolute top-4 left-4">
-                                                            <span className={`px-3 py-1.5 rounded-full text-xs font-bold backdrop-blur-md ${
-                                                                hostel.type === 'Boys' 
-                                                                    ? 'bg-blue-500/80 text-white' 
-                                                                    : hostel.type === 'Girls' 
-                                                                    ? 'bg-pink-500/80 text-white'
-                                                                    : 'bg-purple-500/80 text-white'
-                                                            }`}>
-                                                                <HiOutlineUsers className="inline mr-1" size={12} />
-                                                                {hostel.type}
-                                                            </span>
-                                                        </div>
-
-                                                        {hostel.rating > 0 && (
-                                                            <div className="absolute top-4 right-4 flex items-center gap-1 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md text-white">
-                                                                <HiOutlineStar className="fill-yellow-400 text-yellow-400" size={14} />
-                                                                <span className="text-sm font-bold">{hostel.rating.toFixed(1)}</span>
-                                                            </div>
-                                                        )}
-                                                    </div>
-
-                                                    <div className="p-5">
-                                                        <h3 className="text-lg font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] line-clamp-1">
-                                                            {hostel.name}
-                                                        </h3>
-
-                                                        <div className="flex items-center gap-2 mt-2 text-[#2c1b13]/60 dark:text-[#fcf2e9]/60">
-                                                            <HiOutlineLocationMarker size={16} className="shrink-0" />
-                                                            <span className="text-sm line-clamp-1">{hostel.address}, {hostel.city}</span>
-                                                        </div>
-
-                                                        {hostel.facilities && hostel.facilities.length > 0 && (
-                                                            <div className="flex flex-wrap gap-1.5 mt-3">
-                                                                {hostel.facilities.slice(0, 3).map((facility: string, i: number) => (
-                                                                    <span 
-                                                                        key={i}
-                                                                        className="px-2 py-0.5 rounded bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 text-xs text-[#2c1b13]/70 dark:text-[#fcf2e9]/70"
-                                                                    >
-                                                                        {facility}
+                                <>
+                                    {isLoading ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                            {[1, 2, 3, 4, 5, 6].map((i) => (
+                                                <div key={i} className="bg-white/50 dark:bg-black/20 rounded-3xl h-[380px] animate-pulse" />
+                                            ))}
+                                        </div>
+                                    ) : filteredHostels.length === 0 ? (
+                                        <div className="text-center py-20 bg-white dark:bg-[#2c1b13] rounded-3xl">
+                                            <HiOutlineOfficeBuilding size={64} className="mx-auto text-[#2c1b13]/20 dark:text-[#fcf2e9]/20 mb-4" />
+                                            <h3 className="text-2xl font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-2">
+                                                No Hostels Found
+                                            </h3>
+                                            <p className="text-[#2c1b13]/60 dark:text-[#fcf2e9]/60 mb-6">
+                                                Try adjusting your filters or search query
+                                            </p>
+                                            <button
+                                                onClick={clearFilters}
+                                                className="px-6 py-3 rounded-xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] font-bold hover:scale-105 transition-transform"
+                                            >
+                                                Clear Filters
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                            {filteredHostels.map((hostel: any, index: number) => (
+                                                <motion.div
+                                                    key={hostel._id}
+                                                    initial={{ opacity: 0, y: 20 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ delay: index * 0.05 }}
+                                                >
+                                                    <Link href={`/hostels/${hostel._id}`}>
+                                                        <div className="group bg-white dark:bg-[#2c1b13] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-[#2c1b13]/5 dark:border-white/5">
+                                                            <div className="relative h-52 overflow-hidden">
+                                                                {hostel.images?.[0] ? (
+                                                                    <img 
+                                                                        src={hostel.images[0].url} 
+                                                                        alt={hostel.name}
+                                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                                                    />
+                                                                ) : (
+                                                                    <div className="w-full h-full bg-gradient-to-br from-[#2c1b13]/20 to-[#2c1b13]/10 flex items-center justify-center">
+                                                                        <HiOutlineOfficeBuilding size={48} className="text-[#2c1b13]/30 dark:text-[#fcf2e9]/30" />
+                                                                    </div>
+                                                                )}
+                                                                
+                                                                <div className="absolute top-4 left-4">
+                                                                    <span className={`px-3 py-1.5 rounded-full text-xs font-bold backdrop-blur-md ${
+                                                                        hostel.type === 'Boys' 
+                                                                            ? 'bg-blue-500/80 text-white' 
+                                                                            : hostel.type === 'Girls' 
+                                                                            ? 'bg-pink-500/80 text-white'
+                                                                            : 'bg-purple-500/80 text-white'
+                                                                    }`}>
+                                                                        <HiOutlineUsers className="inline mr-1" size={12} />
+                                                                        {hostel.type}
                                                                     </span>
-                                                                ))}
-                                                                {hostel.facilities.length > 3 && (
-                                                                    <span className="text-xs text-[#2c1b13]/40 dark:text-[#fcf2e9]/40">
-                                                                        +{hostel.facilities.length - 3}
-                                                                    </span>
+                                                                </div>
+
+                                                                {hostel.rating > 0 && (
+                                                                    <div className="absolute top-4 right-4 flex items-center gap-1 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md text-white">
+                                                                        <HiOutlineStar className="fill-yellow-400 text-yellow-400" size={14} />
+                                                                        <span className="text-sm font-bold">{hostel.rating.toFixed(1)}</span>
+                                                                    </div>
                                                                 )}
                                                             </div>
-                                                        )}
 
-                                                        <div className="flex items-center justify-between mt-5 pt-4 border-t border-[#2c1b13]/10 dark:border-white/10">
-                                                            <div>
-                                                                <span className="text-xs text-[#2c1b13]/40 dark:text-[#fcf2e9]/40">From</span>
-                                                                <p className="text-lg font-bold text-[#2c1b13] dark:text-[#fcf2e9]">
-                                                                    PKR 8,000<span className="text-xs font-normal opacity-60">/mo</span>
-                                                                </p>
-                                                            </div>
-                                                            <div className="p-2.5 rounded-xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] group-hover:scale-110 transition-transform">
-                                                                <HiOutlineArrowRight size={16} />
+                                                            <div className="p-5">
+                                                                <h3 className="text-lg font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] line-clamp-1">
+                                                                    {hostel.name}
+                                                                </h3>
+
+                                                                <div className="flex items-center gap-2 mt-2 text-[#2c1b13]/60 dark:text-[#fcf2e9]/60">
+                                                                    <HiOutlineLocationMarker size={16} className="shrink-0" />
+                                                                    <span className="text-sm line-clamp-1">{hostel.address}, {hostel.city}</span>
+                                                                </div>
+
+                                                                {hostel.facilities && hostel.facilities.length > 0 && (
+                                                                    <div className="flex flex-wrap gap-1.5 mt-3">
+                                                                        {hostel.facilities.slice(0, 3).map((facility: string, i: number) => (
+                                                                            <span 
+                                                                                key={i}
+                                                                                className="px-2 py-0.5 rounded bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 text-xs text-[#2c1b13]/70 dark:text-[#fcf2e9]/70"
+                                                                            >
+                                                                                {facility}
+                                                                            </span>
+                                                                        ))}
+                                                                        {hostel.facilities.length > 3 && (
+                                                                            <span className="text-xs text-[#2c1b13]/40 dark:text-[#fcf2e9]/40">
+                                                                                +{hostel.facilities.length - 3}
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                )}
+
+                                                                <div className="flex items-center justify-between mt-5 pt-4 border-t border-[#2c1b13]/10 dark:border-white/10">
+                                                                    <div>
+                                                                        <span className="text-xs text-[#2c1b13]/40 dark:text-[#fcf2e9]/40">From</span>
+                                                                        <p className="text-lg font-bold text-[#2c1b13] dark:text-[#fcf2e9]">
+                                                                            PKR 8,000<span className="text-xs font-normal opacity-60">/mo</span>
+                                                                        </p>
+                                                                    </div>
+                                                                    <div className="p-2.5 rounded-xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] group-hover:scale-110 transition-transform">
+                                                                        <HiOutlineArrowRight size={16} />
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            </Link>
-                                        </motion.div>
-                                    ))}
-                                </div>
+                                                    </Link>
+                                                </motion.div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </main>
                     </div>
