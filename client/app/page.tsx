@@ -6,6 +6,7 @@ import ReviewsSection from "./components/Home/ReviewsSection";
 import FAQ from "./components/Home/FAQ";
 import Footer from "./components/ui/Footer";
 import Header from "./components/ui/Header";
+import HomeMapSection from "./components/Home/HomeMapSection";
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
       <main>
         <Hero />
         <FeaturedHostels />
+        <HomeMapSection />
         <HostelGrid />
         <ReviewsSection />
         <FAQ />

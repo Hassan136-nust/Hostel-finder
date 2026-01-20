@@ -118,15 +118,43 @@ const HostelsPage = () => {
                         transition={{ delay: 0.1 }}
                         className="max-w-3xl mx-auto"
                     >
-                        <div className="relative">
-                            <HiOutlineSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-[#fcf2e9]/40 dark:text-[#2c1b13]/40" size={24} />
-                            <input
-                                type="text"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search by hostel name, city, or area..."
-                                className="w-full pl-14 pr-5 py-5 rounded-2xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] placeholder:text-[#fcf2e9]/40 dark:placeholder:text-[#2c1b13]/40 shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#2c1b13]/50 dark:focus:ring-[#fcf2e9]/50 transition-all text-lg"
-                            />
+                        <div className="flex flex-col md:flex-row gap-4">
+                            <div className="relative flex-1">
+                                <HiOutlineSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-[#fcf2e9]/40 dark:text-[#2c1b13]/40" size={24} />
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder="Search by hostel name, city, or area..."
+                                    className="w-full pl-14 pr-5 py-5 rounded-2xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] placeholder:text-[#fcf2e9]/40 dark:placeholder:text-[#2c1b13]/40 shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#2c1b13]/50 dark:focus:ring-[#fcf2e9]/50 transition-all text-lg"
+                                />
+                            </div>
+
+                            {/* View Mode Toggle - Desktop */}
+                            <div className="hidden md:flex bg-[#2c1b13] dark:bg-[#fcf2e9] p-2 rounded-2xl shadow-2xl">
+                                <button
+                                    onClick={() => setViewMode('grid')}
+                                    className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-all font-bold ${
+                                        viewMode === 'grid'
+                                            ? "bg-[#fcf2e9] dark:bg-[#2c1b13] text-[#2c1b13] dark:text-[#fcf2e9] shadow-md"
+                                            : "text-[#fcf2e9]/60 dark:text-[#2c1b13]/60 hover:bg-[#fcf2e9]/10 dark:hover:bg-[#2c1b13]/10"
+                                    }`}
+                                >
+                                    <HiOutlineViewGrid size={20} />
+                                    Hostel Grid
+                                </button>
+                                <button
+                                    onClick={() => setViewMode('map')}
+                                    className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-all font-bold ${
+                                        viewMode === 'map'
+                                            ? "bg-[#fcf2e9] dark:bg-[#2c1b13] text-[#2c1b13] dark:text-[#fcf2e9] shadow-md"
+                                            : "text-[#fcf2e9]/60 dark:text-[#2c1b13]/60 hover:bg-[#fcf2e9]/10 dark:hover:bg-[#2c1b13]/10"
+                                    }`}
+                                >
+                                    <HiOutlineMap size={20} />
+                                    Hostels on Map
+                                </button>
+                            </div>
                         </div>
                     </motion.div>
                 </div>
@@ -249,30 +277,6 @@ const HostelsPage = () => {
                                 <p className="text-[#2c1b13]/60 dark:text-[#fcf2e9]/60">
                                     Showing <span className="font-bold text-[#2c1b13] dark:text-[#fcf2e9]">{filteredHostels.length}</span> hostels
                                 </p>
-
-                                {/* View Mode Toggle */}
-                                <div className="flex bg-white dark:bg-[#2c1b13] p-1 rounded-xl shadow-sm border border-[#2c1b13]/5 dark:border-white/5">
-                                    <button
-                                        onClick={() => setViewMode('grid')}
-                                        className={`p-2 rounded-lg transition-all ${
-                                            viewMode === 'grid'
-                                                ? "bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] shadow-md"
-                                                : "text-[#2c1b13]/40 dark:text-[#fcf2e9]/40 hover:bg-[#2c1b13]/5 dark:hover:bg-[#fcf2e9]/5"
-                                        }`}
-                                    >
-                                        <HiOutlineViewGrid size={20} />
-                                    </button>
-                                    <button
-                                        onClick={() => setViewMode('map')}
-                                        className={`p-2 rounded-lg transition-all ${
-                                            viewMode === 'map'
-                                                ? "bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] shadow-md"
-                                                : "text-[#2c1b13]/40 dark:text-[#fcf2e9]/40 hover:bg-[#2c1b13]/5 dark:hover:bg-[#fcf2e9]/5"
-                                        }`}
-                                    >
-                                        <HiOutlineMap size={20} />
-                                    </button>
-                                </div>
                             </div>
 
                             {viewMode === 'map' ? (
