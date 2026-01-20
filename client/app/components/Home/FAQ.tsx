@@ -23,11 +23,11 @@ const FAQ = () => {
   if (!questions || questions.length === 0) return null;
 
   return (
-    <section className="py-20 bg-gradient-to-b from-[#1a1a2e] to-[#121226] relative overflow-hidden">
+    <section className="py-20 bg-[#fcf2e9] dark:bg-[#1f1710] relative overflow-hidden transition-colors">
         {/* Background Decorative Elements */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-            <div className="absolute top-[-10%] left-[-5%] w-96 h-96 bg-purple-500/10 rounded-full blur-3xl opacity-50" />
-            <div className="absolute bottom-[-10%] right-[-5%] w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl opacity-50" />
+            <div className="absolute top-[-10%] left-[-5%] w-96 h-96 bg-orange-500/10 rounded-full blur-3xl opacity-50" />
+            <div className="absolute bottom-[-10%] right-[-5%] w-96 h-96 bg-[#2c1b13]/10 dark:bg-[#fcf2e9]/5 rounded-full blur-3xl opacity-50" />
         </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -36,16 +36,16 @@ const FAQ = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-heading font-bold text-white mb-6"
+            className="text-4xl md:text-5xl font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-6"
           >
-            Frequently Asked <span className="text-purple-500">Questions</span>
+            Frequently Asked <i>Questions</i>
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-lg text-white/60"
+            className="text-lg text-[#2c1b13]/70 dark:text-[#fcf2e9]/70"
           >
              Everything you need to know about finding your perfect hostel. Can't find the answer you're looking for? Feel free to contact us.
           </motion.p>
@@ -64,21 +64,23 @@ const FAQ = () => {
               <button
                 className={`w-full text-left p-6 rounded-2xl transition-all duration-300 border ${
                   activeQuestion === index
-                    ? "bg-[#1a1a2e] border-purple-500 shadow-lg shadow-purple-500/10"
-                    : "bg-[#1a1a2e]/50 border-white/5 hover:border-white/10 hover:bg-[#1a1a2e]"
+                    ? "bg-[#2c1b13] border-orange-500 shadow-lg shadow-orange-500/10 dark:bg-[#fcf2e9] dark:border-orange-500"
+                    : "bg-[#fcf2e9] border-[#2c1b13]/10 hover:border-orange-500/50 hover:bg-[#fff8f2] dark:bg-[#2c1b13] dark:border-[#fcf2e9]/10 dark:hover:bg-[#3a251b]"
                 }`}
                 onClick={() => toggleQuestion(index)}
               >
                 <div className="flex justify-between items-start w-full gap-4">
                   <h3 className={`text-lg font-bold transition-colors ${
-                      activeQuestion === index ? "text-white" : "text-white/80 group-hover:text-white"
+                      activeQuestion === index 
+                      ? "text-orange-500 dark:text-orange-600" 
+                      : "text-[#2c1b13] group-hover:text-orange-600 dark:text-[#fcf2e9] dark:group-hover:text-orange-400"
                   }`}>
                     {q.question}
                   </h3>
                   <div className={`mt-1 p-1 rounded-full shrink-0 transition-all duration-300 ${
                       activeQuestion === index 
-                        ? "bg-purple-500 text-white rotate-180" 
-                        : "text-white/40 group-hover:text-white"
+                        ? "bg-orange-500 text-white rotate-180" 
+                        : "text-[#2c1b13]/40 group-hover:text-orange-600 dark:text-[#fcf2e9]/40 dark:group-hover:text-orange-400"
                   }`}>
                     <HiOutlineChevronDown size={20} />
                   </div>
@@ -93,7 +95,7 @@ const FAQ = () => {
                       transition={{ duration: 0.3 }}
                       className="overflow-hidden"
                     >
-                      <p className="pt-4 text-white/60 leading-relaxed border-t border-white/5 mt-4">
+                      <p className="pt-4 text-white dark:text-black leading-relaxed border-t border-[#2c1b13]/10 dark:border-[#fcf2e9]/10 mt-4">
                         {q.answer}
                       </p>
                     </motion.div>
