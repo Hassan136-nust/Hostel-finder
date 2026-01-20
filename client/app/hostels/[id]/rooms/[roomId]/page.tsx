@@ -156,6 +156,28 @@ const RoomDetailPage = () => {
                 <div className="max-w-[1440px] mx-auto px-6 md:px-12">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2 space-y-6">
+                            {images.length > 1 && (
+                                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-[#2c1b13] rounded-3xl p-6 shadow-xl">
+                                    <h3 className="text-sm font-bold uppercase tracking-wider text-[#2c1b13]/60 dark:text-[#fcf2e9]/60 mb-4">Photo Gallery</h3>
+                                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+                                        {images.map((img: any, i: number) => (
+                                            <button 
+                                                key={i} 
+                                                onClick={() => setCurrentImage(i)} 
+                                                className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all hover:scale-105 ${i === currentImage ? "border-[#2c1b13] dark:border-[#fcf2e9] ring-2 ring-[#2c1b13]/30 dark:ring-[#fcf2e9]/30 scale-105" : "border-[#2c1b13]/10 dark:border-[#fcf2e9]/10 opacity-70 hover:opacity-100 hover:border-[#2c1b13]/30 dark:hover:border-[#fcf2e9]/30"}`}
+                                            >
+                                                <img src={img.url} alt={`Room - Image ${i + 1}`} className="w-full h-full object-cover" />
+                                                {i === currentImage && (
+                                                    <div className="absolute inset-0 bg-[#2c1b13]/10 dark:bg-[#fcf2e9]/10 flex items-center justify-center">
+                                                        <HiOutlineCheck size={24} className="text-[#2c1b13] dark:text-[#fcf2e9]" />
+                                                    </div>
+                                                )}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+
                             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-[#2c1b13] rounded-3xl p-8 shadow-xl">
                                 <h2 className="text-2xl font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-4">About This Room</h2>
                                 <p className="text-[#2c1b13]/80 dark:text-[#fcf2e9]/80 leading-relaxed text-lg">
@@ -177,18 +199,7 @@ const RoomDetailPage = () => {
                                 </motion.div>
                             )}
 
-                            {images.length > 1 && (
-                                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-white dark:bg-[#2c1b13] rounded-3xl p-8 shadow-xl">
-                                    <h2 className="text-2xl font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-6">Photo Gallery</h2>
-                                    <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
-                                        {images.map((img: any, i: number) => (
-                                            <button key={i} onClick={() => setCurrentImage(i)} className={`aspect-square rounded-2xl overflow-hidden border-2 transition-all ${i === currentImage ? "border-[#2c1b13] dark:border-[#fcf2e9] ring-4 ring-[#2c1b13]/20" : "border-transparent opacity-70 hover:opacity-100"}`}>
-                                                <img src={img.url} alt="" className="w-full h-full object-cover" />
-                                            </button>
-                                        ))}
-                                    </div>
-                                </motion.div>
-                            )}
+
                         </div>
 
                         <div className="lg:col-span-1">
