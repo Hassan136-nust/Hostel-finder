@@ -161,6 +161,10 @@ export const loginUser = CatchAsyncError(async (req:Request,res:Response , next 
       return next(new ErrorHandler("Invalid email or password" , 400))
     }
 
+    if (!user.isActive) {
+      return next(new ErrorHandler("Your account has been deactivated. Please contact support.", 403));
+    }
+
     const isPasswordMatch = await user.comparePassword(password)
 
     if(!isPasswordMatch){

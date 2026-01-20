@@ -35,6 +35,10 @@ export const isAuthenticated = CatchAsyncError(async (req: Request, res: Respons
         req.user = dbUser;
     }
 
+    if (!req.user?.isActive) {
+        return next(new ErrorHandler("Your account has been deactivated. Please contact support.", 403));
+    }
+
     next();
 });
 

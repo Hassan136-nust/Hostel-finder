@@ -50,6 +50,27 @@ export const adminApi = apiSlice.injectEndpoints({
         url: "admin/users",
         method: "GET",
       }),
+      providesTags: ['Users'],
+    }),
+
+    // Update user role
+    updateUserRole: builder.mutation({
+      query: (data) => ({
+        url: "admin/update-user-role",
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ['Users'],
+    }),
+
+    // Update user status
+    updateUserStatus: builder.mutation({
+      query: (data) => ({
+        url: "admin/update-user-status",
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ['Users'],
     }),
 
     // Get pending manager requests
@@ -163,4 +184,8 @@ export const {
   useGetActiveAnnouncementsQuery,
   useToggleAnnouncementMutation,
   useDeleteAnnouncementMutation,
+
+
+  useUpdateUserRoleMutation,
+  useUpdateUserStatusMutation,
 } = adminApi;

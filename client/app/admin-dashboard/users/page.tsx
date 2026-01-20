@@ -1,22 +1,52 @@
 "use client";
 
 import React, { useState } from "react";
-import { useGetAdminUsersQuery } from "@/redux/features/admin/adminApi";
+import { 
+    useGetAdminUsersQuery, 
+    useUpdateUserRoleMutation, 
+    useUpdateUserStatusMutation 
+} from "@/redux/features/admin/adminApi";
 import {
     HiOutlineUsers,
     HiOutlineSearch,
     HiOutlineMail,
-    HiOutlinePhone
+    HiOutlinePhone,
+    HiOutlineBan,
+    HiOutlineCheck,
 } from "react-icons/hi";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { toast } from "react-hot-toast";
 
 const AdminUsersPage = () => {
-    const { data, isLoading } = useGetAdminUsersQuery(undefined);
+    const { data, isLoading, refetch } = useGetAdminUsersQuery(undefined);
+    const [updateUserRole, { isLoading: isUpdatingRole }] = useUpdateUserRoleMutation();
+    const [updateUserStatus, { isLoading: isUpdatingStatus }] = useUpdateUserStatusMutation();
+    
     const [search, setSearch] = useState("");
     const [roleFilter, setRoleFilter] = useState("all");
 
     const users = data?.users || [];
+
+    const handleRoleChange = async (userId: string, newRole: string) => {
+        try {
+            await updateUserRole({ userId, role: newRole }).unwrap();
+            toast.success("User role updated successfully");
+            refetch();
+        } catch (error: any) {
+            toast.error(error?.data?.message || "Failed to update role");
+        }
+    };
+
+    const handleStatusToggle = async (userId: string, currentStatus: boolean) => {
+        try {
+            await updateUserStatus({ userId, isActive: !currentStatus }).unwrap();
+            toast.success(currentStatus ? "User banned successfully" : "User activated successfully");
+            refetch();
+        } catch (error: any) {
+            toast.error(error?.data?.message || "Failed to update status");
+        }
+    };
 
     const filteredUsers = users.filter((user: any) => {
         const matchesSearch = user.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -79,8 +109,8 @@ const AdminUsersPage = () => {
                                 <th className="text-left py-4 px-6 text-white/60 font-medium text-sm">User</th>
                                 <th className="text-left py-4 px-6 text-white/60 font-medium text-sm">Contact</th>
                                 <th className="text-left py-4 px-6 text-white/60 font-medium text-sm">Role</th>
-                                <th className="text-left py-4 px-6 text-white/60 font-medium text-sm">Request Status</th>
-                                <th className="text-left py-4 px-6 text-white/60 font-medium text-sm">Joined</th>
+                                <th className="text-left py-4 px-6 text-white/60 font-medium text-sm">Status</th>
+                                <th className="text-left py-4 px-6 text-white/60 font-medium text-sm">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -107,7 +137,10 @@ const AdminUsersPage = () => {
                                                     </div>
                                                 )}
                                             </div>
-                                            <p className="font-medium text-white">{user.name}</p>
+                                            <div>
+                                                <p className="font-medium text-white">{user.name}</p>
+                                                <p className="text-xs text-white/40">Joined {new Date(user.createdAt).toLocaleDateString()}</p>
+                                            </div>
                                         </div>
                                     </td>
                                     <td className="py-4 px-6">
@@ -123,28 +156,50 @@ const AdminUsersPage = () => {
                                         </div>
                                     </td>
                                     <td className="py-4 px-6">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                                            user.role === "admin" ? "bg-purple-500/20 text-purple-400" :
-                                            user.role === "manager" ? "bg-blue-500/20 text-blue-400" :
-                                            "bg-white/10 text-white/60"
-                                        }`}>
-                                            {user.role}
-                                        </span>
+                                        <select
+                                            value={user.role}
+                                            onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                                            disabled={isUpdatingRole}
+                                            className={`px-3 py-1 rounded-lg text-xs font-bold border border-white/10 outline-none cursor-pointer ${
+                                                user.role === "admin" ? "bg-purple-500/20 text-purple-400" :
+                                                user.role === "manager" ? "bg-blue-500/20 text-blue-400" :
+                                                "bg-white/5 text-white/60"
+                                            }`}
+                                        >
+                                            <option value="user" className="bg-[#1a1a2e] text-white">User</option>
+                                            <option value="manager" className="bg-[#1a1a2e] text-white">Manager</option>
+                                            <option value="admin" className="bg-[#1a1a2e] text-white">Admin</option>
+                                        </select>
                                     </td>
                                     <td className="py-4 px-6">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                                            user.hostelRequestStatus === "pending" ? "bg-yellow-500/20 text-yellow-400" :
-                                            user.hostelRequestStatus === "approved" ? "bg-green-500/20 text-green-400" :
-                                            user.hostelRequestStatus === "rejected" ? "bg-red-500/20 text-red-400" :
-                                            "bg-white/10 text-white/40"
+                                        <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                            user.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
                                         }`}>
-                                            {user.hostelRequestStatus || "none"}
-                                        </span>
+                                            {user.isActive ? "Active" : "Banned"}
+                                        </div>
                                     </td>
                                     <td className="py-4 px-6">
-                                        <p className="text-white/50 text-sm">
-                                            {new Date(user.createdAt).toLocaleDateString()}
-                                        </p>
+                                        <button
+                                            onClick={() => handleStatusToggle(user._id, user.isActive)}
+                                            disabled={isUpdatingStatus}
+                                            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                                                user.isActive
+                                                    ? "bg-red-500/10 text-red-500 hover:bg-red-500/20"
+                                                    : "bg-green-500/10 text-green-500 hover:bg-green-500/20"
+                                            }`}
+                                        >
+                                            {user.isActive ? (
+                                                <>
+                                                    <HiOutlineBan size={14} />
+                                                    Ban User
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <HiOutlineCheck size={14} />
+                                                    Unban
+                                                </>
+                                            )}
+                                        </button>
                                     </td>
                                 </motion.tr>
                             ))}
