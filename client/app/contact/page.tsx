@@ -63,7 +63,7 @@ const ContactPage = () => {
                                 animate={{ opacity: 1, x: 0 }}
                             >
                                 <h1 className="text-4xl md:text-6xl font-heading font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-6">
-                                    Let's <span className="text-orange-600 dark:text-orange-400">Talk</span>
+                                    Let's <span className="italic font-light">Talk</span>
                                 </h1>
                                 <p className="text-lg text-[#2c1b13]/70 dark:text-[#fcf2e9]/70 leading-relaxed mb-8">
                                     Have a question, feedback, or just want to say hi? We're here to help! Whether you're a student looking for a room or a hostel owner wanting to partner up, drop us a line.

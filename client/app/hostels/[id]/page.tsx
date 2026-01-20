@@ -27,6 +27,7 @@ import {
     HiOutlineShare,
     HiOutlineEyeOff
 } from "react-icons/hi";
+import { FaWhatsapp } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 
@@ -176,8 +177,16 @@ const HostelDetailPage = () => {
                 <div className="absolute top-24 right-6 md:right-12 z-10 flex gap-2">
                     <button 
                         onClick={() => {
-                            navigator.clipboard.writeText(window.location.href);
-                            toast.success("Link copied to clipboard!");
+                            if (navigator.share) {
+                                navigator.share({
+                                    title: hostel.name,
+                                    text: `Check out ${hostel.name} on HostelFinder!`,
+                                    url: window.location.href
+                                });
+                            } else {
+                                navigator.clipboard.writeText(window.location.href);
+                                toast.success("Link copied to clipboard!");
+                            }
                         }}
                         className="p-3 rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-white/20 transition-all"
                         title="Share hostel"
@@ -482,9 +491,19 @@ const HostelDetailPage = () => {
                                     )}
 
                                     {hostel.contactPhone && (
-                                        <a href={`tel:${hostel.contactPhone}`} className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] font-bold text-lg hover:scale-[1.02] active:scale-95 transition-transform">
-                                            <HiOutlinePhone size={22} />{hostel.contactPhone}
-                                        </a>
+                                        <div className="space-y-3">
+                                            <a href={`tel:${hostel.contactPhone}`} className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] font-bold text-lg hover:scale-[1.02] active:scale-95 transition-transform">
+                                                <HiOutlinePhone size={22} /> {hostel.contactPhone}
+                                            </a>
+                                            <a 
+                                                href={`https://wa.me/${hostel.contactPhone.replace(/\D/g,'')}?text=${encodeURIComponent(`Hi, I saw your hostel (${hostel.name}) on HostelFinder and want to know about availability.`)}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-green-500 text-white font-bold text-lg hover:bg-green-600 hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-green-500/20"
+                                            >
+                                                <FaWhatsapp size={22} /> Chat on WhatsApp
+                                            </a>
+                                        </div>
                                     )}
 
                                     <div className="mt-6 pt-6 border-t border-[#2c1b13]/10 dark:border-[#fcf2e9]/10 space-y-3 text-sm">

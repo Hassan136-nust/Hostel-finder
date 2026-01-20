@@ -14,8 +14,10 @@ import {
     HiOutlineArrowRight,
     HiOutlineFilter,
     HiOutlineX,
-    HiOutlineAdjustments
+    HiOutlineAdjustments,
+    HiOutlineShare
 } from "react-icons/hi";
+import { FaWhatsapp } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import CompareButton from "../components/Comparison/CompareButton";
 
@@ -430,6 +432,39 @@ const HostelsPage = () => {
                                                                         </p>
                                                                     </div>
                                                                     <div className="flex items-center gap-2">
+                                                                        <div className="flex gap-1 z-10 relative">
+                                                                            {hostel.contactPhone && (
+                                                                                <a
+                                                                                    href={`https://wa.me/${hostel.contactPhone.replace(/\D/g,'')}?text=${encodeURIComponent(`Hi, I saw your hostel (${hostel.name}) on HOSTELITE and want to know about availability.`)}`}
+                                                                                    target="_blank"
+                                                                                    rel="noopener noreferrer"
+                                                                                    onClick={(e) => e.stopPropagation()}
+                                                                                    className="p-2.5 rounded-xl bg-green-500/10 text-green-600 hover:bg-green-500 hover:text-white transition-all"
+                                                                                    title="Chat on WhatsApp"
+                                                                                >
+                                                                                    <FaWhatsapp size={18} />
+                                                                                </a>
+                                                                            )}
+                                                                            <button
+                                                                                onClick={(e) => {
+                                                                                    e.preventDefault();
+                                                                                    e.stopPropagation();
+                                                                                    if (navigator.share) {
+                                                                                        navigator.share({
+                                                                                            title: hostel.name,
+                                                                                            text: `Check out ${hostel.name} on HostelFinder!`,
+                                                                                            url: `${window.location.origin}/hostels/${hostel._id}`
+                                                                                        });
+                                                                                    } else {
+                                                                                        navigator.clipboard.writeText(`${window.location.origin}/hostels/${hostel._id}`);
+                                                                                    }
+                                                                                }}
+                                                                                className="p-2.5 rounded-xl bg-[#2c1b13]/5 dark:bg-[#fcf2e9]/5 text-[#2c1b13] dark:text-[#fcf2e9] hover:bg-[#2c1b13] hover:text-[#fcf2e9] dark:hover:bg-[#fcf2e9] dark:hover:text-[#2c1b13] transition-all"
+                                                                                title="Share"
+                                                                            >
+                                                                                <HiOutlineShare size={18} />
+                                                                            </button>
+                                                                        </div>
                                                                         <div onClick={(e) => e.preventDefault()} className="z-10 relative">
                                                                             <CompareButton hostel={hostel} />
                                                                         </div>
