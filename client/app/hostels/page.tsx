@@ -73,6 +73,15 @@ const HostelsPage = () => {
                 return false;
             }
 
+            if (selectedPriceRange !== 0) {
+                const range = PRICE_RANGES[selectedPriceRange];
+                // If hostel has no price, should it be shown? Probably not if a price filter is active.
+                if (!hostel.minPrice) return false;
+                if (hostel.minPrice < range.min || hostel.minPrice > range.max) {
+                    return false;
+                }
+            }
+
             if (selectedFacilities.length > 0) {
                 const hostelFacilities = hostel.facilities || [];
                 const hasAllFacilities = selectedFacilities.every(f => hostelFacilities.includes(f));
