@@ -16,7 +16,10 @@ import {
     getAnnouncements,
     getActiveAnnouncements,
     toggleAnnouncement,
-    deleteAnnouncement
+    toggleAnnouncement,
+    deleteAnnouncement,
+    updateUserRole,
+    updateUserStatus
 } from "../controllers/admin.controller";
 import { isAuthenticated, authorizeRoles } from "../middlewares/auth";
 
@@ -39,6 +42,8 @@ adminRouter.put("/toggle-featured", toggleFeaturedHostel);
 
 // Users
 adminRouter.get("/users", getAdminUsers);
+adminRouter.put("/update-user-role", updateUserRole);
+adminRouter.put("/update-user-status", updateUserStatus);
 
 // Manager requests
 adminRouter.get("/pending-requests", getPendingRequests);

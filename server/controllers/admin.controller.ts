@@ -422,3 +422,54 @@ export const deleteAnnouncement = CatchAsyncError(async (req: Request, res: Resp
         return next(new ErrorHandler(error.message, 500));
     }
 });
+
+// Update user role (admin)
+export const updateUserRole = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { userId, role } = req.body;
+
+        if (!["user", "admin", "manager"].includes(role)) {
+            return next(new ErrorHandler("Invalid role", 400));
+        }
+
+        const user = await userModel.findByIdAndUpdate(userId, { role }, { new: true });
+
+        if (!user) {
+            return next(new ErrorHandler("User not found", 404));
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "User role updated successfully",
+            user
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
+// Update user status (ban/unban)
+export const updateUserStatus = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { userId, isActive } = req.body;
+
+        const user = await userModel.findById(userId);
+
+        if (!user) {
+            return next(new ErrorHandler("User not found", 404));
+        }
+
+        user.isActive = isActive;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: isActive ? "User activated successfully" : "User banned successfully",
+            user
+        });
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
