@@ -12,7 +12,7 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
     let result = await baseQuery(args, api, extraOptions);
     
-    if (result.error && result.error.status === 401) {
+    if (result.error && (result.error.status === 401 || result.error.status === 403)) {
         api.dispatch(userLoggedOut());
     }
     
