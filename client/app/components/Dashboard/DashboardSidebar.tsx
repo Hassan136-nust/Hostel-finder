@@ -33,7 +33,7 @@ const sidebarItems = [
     icon: HiOutlineOfficeBuilding,
   },
   {
-    name: "Rooms (3)",
+    name: "Rooms",
     url: "/hostel-dashboard/rooms",
     icon: HiOutlineKey,
   },

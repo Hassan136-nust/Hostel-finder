@@ -147,8 +147,8 @@ const HostelsPage = () => {
                                 </div>
                                 <div className="flex items-center justify-center gap-4">
 
-                             {/* Comparison Button - Desktop */}
-                            <div className="hidden md:flex bg-[#2c1b13] dark:bg-[#fcf2e9] p-2 rounded-2xl shadow-2xl gap-2">
+                             {/* Comparison Button */}
+                            <div className="flex bg-[#2c1b13] dark:bg-[#fcf2e9] p-2 rounded-2xl shadow-2xl gap-2">
                                 <button
                                     onClick={() => dispatch(toggleComparisonModal(true))}
                                     className="flex items-center gap-2 px-4 py-3 rounded-xl transition-all font-bold text-[#fcf2e9]/70 dark:text-[#2c1b13]/70 hover:bg-[#fcf2e9]/10 dark:hover:bg-[#2c1b13]/10 hover:text-[#fcf2e9] dark:hover:text-[#2c1b13]"
@@ -161,13 +161,13 @@ const HostelsPage = () => {
                                             </span>
                                         )}
                                     </div>
-                                    <span className="hidden xl:inline">Compare</span>
+                                    <span className="hidden sm:inline">Compare</span>
                                 </button>
                                 <div className="w-px bg-[#fcf2e9]/10 dark:bg-[#2c1b13]/10 my-2" />
                             </div>
 
-                            {/* View Mode Toggle - Desktop */}
-                            <div className="hidden md:flex bg-[#2c1b13] dark:bg-[#fcf2e9] p-2 rounded-2xl shadow-2xl">
+                            {/* View Mode Toggle */}
+                            <div className="flex bg-[#2c1b13] dark:bg-[#fcf2e9] p-2 rounded-2xl shadow-2xl">
                                 <button
                                     onClick={() => setViewMode('grid')}
                                     className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-all font-bold ${
@@ -493,7 +493,7 @@ const HostelsPage = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 lg:hidden"
+                        className="fixed inset-0 z-[9999] lg:hidden"
                     >
                         <div className="absolute inset-0 bg-black/60" onClick={() => setShowMobileFilters(false)} />
                         <motion.div

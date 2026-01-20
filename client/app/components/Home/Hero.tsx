@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import c1 from "../../assets/customers/c1.jpg";
 import c2 from "../../assets/customers/c2.jpg";
@@ -10,7 +11,15 @@ import hero from "../../assets/hero/hero.jpg";
 import { HiSearch, HiLocationMarker } from "react-icons/hi";
 
 const Hero = () => {
-      const customers = [c1, c2, c3];
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+  const customers = [c1, c2, c3];
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      router.push(`/hostels?search=${encodeURIComponent(searchQuery)}`);
+    }
+  };
 
   return (
     <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-brand-bg dark:bg-dark-bg transition-colors duration-500">
@@ -56,7 +65,10 @@ const Hero = () => {
       />
       
       <input 
-        type="text" 
+        type="text"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
         placeholder="Where do you want to stay?" 
         className="w-full bg-transparent border-none outline-none font-body transition-colors duration-500
           /* Light Mode: Beige Text */
@@ -66,7 +78,9 @@ const Hero = () => {
       />
     </div>
 
-    <button className="px-8 py-4 rounded-[1.5rem] font-body font-bold flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition-all shadow-lg
+    <button 
+      onClick={handleSearch}
+      className="px-8 py-4 rounded-[1.5rem] font-body font-bold flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition-all shadow-lg
       /* Light Mode: Beige BG with Dark Brown Text */
       bg-[#fcf2e9] text-[#2c1b13]
       /* Dark Mode: Dark Brown BG with Beige Text */
