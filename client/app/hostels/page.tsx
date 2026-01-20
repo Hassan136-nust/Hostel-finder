@@ -388,7 +388,8 @@ const HostelsPage = () => {
                                                                     <div>
                                                                         <span className="text-xs text-[#2c1b13]/40 dark:text-[#fcf2e9]/40">From</span>
                                                                         <p className="text-lg font-bold text-[#2c1b13] dark:text-[#fcf2e9]">
-                                                                            PKR 8,000<span className="text-xs font-normal opacity-60">/mo</span>
+                                                                            {hostel.minPrice ? `PKR ${hostel.minPrice.toLocaleString()}` : 'Contact for Price'}
+                                                                            {hostel.minPrice && <span className="text-xs font-normal opacity-60">/mo</span>}
                                                                         </p>
                                                                     </div>
                                                                     <div className="p-2.5 rounded-xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] group-hover:scale-110 transition-transform">

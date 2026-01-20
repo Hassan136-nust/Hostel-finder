@@ -150,7 +150,8 @@ const HostelGrid = () => {
                                                 <div>
                                                     <span className="text-xs text-[#2c1b13]/40 dark:text-[#fcf2e9]/40">Starting from</span>
                                                     <p className="text-xl font-bold text-[#2c1b13] dark:text-[#fcf2e9]">
-                                                        PKR 8,000<span className="text-sm font-normal opacity-60">/mo</span>
+                                                        {hostel.minPrice ? `PKR ${hostel.minPrice.toLocaleString()}` : 'Contact for Price'}
+                                                        {hostel.minPrice && <span className="text-sm font-normal opacity-60">/mo</span>}
                                                     </p>
                                                 </div>
                                                 <div className="p-3 rounded-xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] group-hover:scale-110 transition-transform">

@@ -13,7 +13,8 @@ import {
     FaTwitter, 
     FaInstagram, 
     FaLinkedinIn,
-    FaWhatsapp
+    FaWhatsapp,
+    FaGithub
 } from "react-icons/fa";
 
 const Footer = () => {
@@ -22,30 +23,26 @@ const Footer = () => {
     const footerLinks = {
         explore: [
             { name: "Find Hostels", href: "/hostels" },
-            { name: "Browse by City", href: "/cities" },
-            { name: "Popular Areas", href: "/areas" },
-            { name: "Map View", href: "/map" },
+            { name: "Browse by City", href: "/hostels" },
+            { name: "Popular Areas", href: "/hostels" },
+            { name: "Map View", href: "/hostels" },
         ],
         forManagers: [
             { name: "List Your Hostel", href: "/hostel-dashboard" },
             { name: "Manager Dashboard", href: "/hostel-dashboard" },
-            { name: "Pricing Plans", href: "/pricing" },
-            { name: "Success Stories", href: "/stories" },
+            { name: "About", href: "/about" },
         ],
         support: [
-            { name: "Help Center", href: "/help" },
+            { name: "Help Center", href: "/contact" },
             { name: "Contact Us", href: "/contact" },
-            { name: "FAQs", href: "/faqs" },
             { name: "Terms of Service", href: "/terms" },
         ],
     };
 
     const socialLinks = [
-        { icon: FaFacebookF, href: "#", label: "Facebook" },
-        { icon: FaTwitter, href: "#", label: "Twitter" },
-        { icon: FaInstagram, href: "#", label: "Instagram" },
-        { icon: FaLinkedinIn, href: "#", label: "LinkedIn" },
-        { icon: FaWhatsapp, href: "#", label: "WhatsApp" },
+        { icon: FaLinkedinIn, href: "https://www.linkedin.com/in/hussain-jamal-b5a76531a/", label: "LinkedIn" },
+        { icon: FaGithub, href: "https://github.com/hussainjamal760", label: "GitHub" },
+        { icon: FaWhatsapp, href: "+923181792848", label: "WhatsApp" },
     ];
 
     return (
@@ -162,9 +159,6 @@ const Footer = () => {
                             </Link>
                             <Link href="/terms" className="text-[#fcf2e9]/40 dark:text-[#2c1b13]/40 hover:text-[#fcf2e9]/70 dark:hover:text-[#2c1b13]/70 text-sm transition-colors">
                                 Terms of Service
-                            </Link>
-                            <Link href="/cookies" className="text-[#fcf2e9]/40 dark:text-[#2c1b13]/40 hover:text-[#fcf2e9]/70 dark:hover:text-[#2c1b13]/70 text-sm transition-colors">
-                                Cookies
                             </Link>
                         </div>
                     </div>

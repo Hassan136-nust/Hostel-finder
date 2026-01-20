@@ -62,11 +62,12 @@ const HostelSearchMap: React.FC<HostelSearchMapProps> = ({ hostels }) => {
         hostels.forEach((hostel) => {
             if (hostel.coordinates?.lat && hostel.coordinates?.lng) {
                 // Custom Price Market
-                // In a real app, this would be dynamic. For now using a placeholder or logic if price exists.
-                const priceLabel = `PKR 8k`; 
+                const priceLabel = hostel.minPrice 
+                    ? `PK ${(hostel.minPrice / 1000).toFixed(1)}k`
+                    : 'N/A';
 
                 const customIcon = L.divIcon({
-                    html: `<div class="bg-white dark:bg-[#2c1b13] text-[#2c1b13] dark:text-[#fcf2e9] font-bold text-xs px-2 py-1 rounded-lg shadow-lg border border-[#2c1b13]/10 dark:border-white/10 whitespace-nowrap hover:scale-110 transition-transform">
+                    html: `<div class="bg-white dark:bg-[#2c1b13] text-[#2c1b13] dark:text-[#fcf2e9] font-bold text-xs px-1 py-1 rounded-lg shadow-lg border border-[#2c1b13]/10 dark:border-white/10 whitespace-nowrap hover:scale-110 transition-transform">
                         ${priceLabel}
                     </div>`,
                     className: "custom-map-marker", 

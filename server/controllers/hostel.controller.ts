@@ -61,8 +61,36 @@ export const createHostel = CatchAsyncError(async (req: Request, res: Response, 
 
 export const getAllHostels = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // Only show active hostels in public listing
-        const hostels = await hostelModel.find({ isActive: { $ne: false } }).populate("reviews"); 
+        const hostels = await hostelModel.aggregate([
+            {
+                $match: { isActive: { $ne: false } }
+            },
+            {
+                $lookup: {
+                    from: "rooms",
+                    localField: "_id",
+                    foreignField: "hostel",
+                    as: "rooms"
+                }
+            },
+            {
+                $addFields: {
+                    minPrice: { 
+                        $min: "$rooms.price" 
+                    },
+                    // Keep reviews populated-like structure if needed, or rely on virtuals manually?
+                    // For now, simpler to just get the array of attributes we need.
+                }
+            },
+            {
+                $project: {
+                    rooms: 0 // Exclude returns rooms array to keep payload light
+                }
+            }
+        ]);
+        
+        // Populate reviews manually if needed, or trust that we just need the count
+        // "hostels" is now a plain object, not a Mongoose document.
         
         res.status(200).json({
             success: true,
