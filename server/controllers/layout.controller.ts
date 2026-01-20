@@ -41,6 +41,11 @@ export const createLayout= CatchAsyncError(async(req:Request , res:Response , ne
             await LayoutModel.create({type:"Categories",categories:categoriesItems})
         }
 
+        if(type === "Terms" || type === "Privacy"){
+            const {content} = req.body;
+            await LayoutModel.create({type, content})
+        }
+
         res.status(200).json({
             success:true,
             message:"Layout created successfully"
@@ -91,6 +96,16 @@ export const editLayout = CatchAsyncError(async(req:Request , res:Response , nex
                 await LayoutModel.create({ type: "Categories", categories: categoriesItems });
             } else {
                 await LayoutModel.findByIdAndUpdate(categoriesData._id, { type: "Categories", categories: categoriesItems });
+            }
+        }
+
+        if(type === "Terms" || type === "Privacy"){
+            const {content} = req.body;
+            const data = await LayoutModel.findOne({type});
+            if(!data){
+                await LayoutModel.create({type, content});
+            } else {
+                await LayoutModel.findByIdAndUpdate(data._id, {type, content});
             }
         }
 
