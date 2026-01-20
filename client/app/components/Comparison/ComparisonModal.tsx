@@ -47,12 +47,12 @@ const ComparisonModal = () => {
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
                 <motion.div 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                    className="absolute inset-0 bg-black/60 backdrop-blur-md"
                     onClick={() => dispatch(toggleComparisonModal(false))}
                 />
                 
@@ -85,7 +85,7 @@ const ComparisonModal = () => {
                                                 >
                                                     <HiX size={14} />
                                                 </button>
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-3">
+                                                <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent flex items-end p-3">
                                                     <h3 className="text-white font-bold text-lg line-clamp-1 text-left">{hostel.name}</h3>
                                                 </div>
                                             </div>

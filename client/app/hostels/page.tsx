@@ -132,17 +132,18 @@ const HostelsPage = () => {
                         transition={{ delay: 0.1 }}
                         className="max-w-3xl mx-auto"
                     >
-                        <div className="flex flex-col md:flex-row gap-4">
-                            <div className="relative flex-1">
-                                <HiOutlineSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-[#fcf2e9]/40 dark:text-[#2c1b13]/40" size={24} />
-                                <input
-                                    type="text"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    placeholder="Search by hostel name, city, or area..."
-                                    className="w-full pl-14 pr-5 py-5 rounded-2xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] placeholder:text-[#fcf2e9]/40 dark:placeholder:text-[#2c1b13]/40 shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#2c1b13]/50 dark:focus:ring-[#fcf2e9]/50 transition-all text-lg"
-                                />
-                            </div>
+                            <div className="flex flex-col gap-4">
+                                <div className="relative w-full">
+                                    <HiOutlineSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-[#fcf2e9]/40 dark:text-[#2c1b13]/40" size={24} />
+                                    <input
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        placeholder="Search by hostel name, city, or area..."
+                                        className="w-full pl-14 pr-5 py-5 rounded-2xl bg-[#2c1b13] dark:bg-[#fcf2e9] text-[#fcf2e9] dark:text-[#2c1b13] placeholder:text-[#fcf2e9]/40 dark:placeholder:text-[#2c1b13]/40 shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#2c1b13]/50 dark:focus:ring-[#fcf2e9]/50 transition-all text-lg"
+                                    />
+                                </div>
+                                <div className="flex items-center justify-center gap-4">
 
                              {/* Comparison Button - Desktop */}
                             <div className="hidden md:flex bg-[#2c1b13] dark:bg-[#fcf2e9] p-2 rounded-2xl shadow-2xl gap-2">
@@ -189,6 +190,7 @@ const HostelsPage = () => {
                                 </button>
                             </div>
                         </div>
+                    </div>
                     </motion.div>
                 </div>
             </section>
