@@ -92,7 +92,6 @@ const Hero = () => {
 </div>
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-8 mt-10">
-  {/* Happy Customers Avatars Group */}
   <div className="flex items-center">
     <div className="flex -space-x-4">
       {[c1, c2, c3].map((img, index) => (
@@ -165,8 +164,8 @@ const Hero = () => {
           H
         </div>
         <div>
-          <h4 className="font-heading font-bold text-white text-lg">The Grand Residency</h4>
-          <p className="text-xs text-white/80 font-body tracking-wide">Starting from $150/month</p>
+          <h4 className="font-heading font-bold text-white text-lg">Find your perfect room</h4>
+          <p className="text-xs text-white/80 font-body tracking-wide">Starting from PKR 10000/month</p>
         </div>
       </div>
     </div>
