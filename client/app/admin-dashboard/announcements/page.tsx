@@ -239,7 +239,7 @@ const AnnouncementsPage = () => {
                                     disabled={creating}
                                     className="w-full py-3 rounded-xl bg-purple-500 text-white font-bold hover:bg-purple-600 transition-colors disabled:opacity-50"
                                 >
-                                    {creating ? "Creating..." : "Create Announcement"}
+                                    {creating ? "Creating...." : "Create Announcement"}
                                 </button>
                             </form>
                         </motion.div>
