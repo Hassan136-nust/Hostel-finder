@@ -36,7 +36,7 @@ const AboutPage = () => {
                                     Simplify Your <span className="italic font-light">Hostel Hunt</span>
                                 </h1>
                         <p className="text-lg md:text-xl text-[#2c1b13]/70 dark:text-[#fcf2e9]/70 leading-relaxed">
-                         HOSTELITE is a smart, modern platform designed to connect students and professionals with the best hostels in their city. We bridge the gap between comfort, affordability, and trust.
+                         HOSTELITEs is a smart, modern platform designed to connect students and professionals with the best hostels in their city. We bridge the gap between comfort, affordability, and trust.
                         </p>
                     </motion.div>
                 </section>
