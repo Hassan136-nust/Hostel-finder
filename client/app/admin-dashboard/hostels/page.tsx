@@ -222,7 +222,7 @@ const AdminHostelsPage = () => {
                 {filteredHostels.length === 0 && (
                     <div className="py-12 text-center">
                         <HiOutlineOfficeBuilding size={48} className="mx-auto text-white/20 mb-4" />
-                        <p className="text-white/60">No hostels found</p>
+                        <p className="text-white/60">No hostels found!!</p>
                     </div>
                 )}
             </div>
