@@ -34,7 +34,7 @@ const ContactPage = () => {
                             Message Sent!
                         </h2>
                         <p className="text-[#2c1b13]/70 dark:text-[#fcf2e9]/70 mb-8">
-                            Thanks for reaching out! We've received your message and our team will get back to you within 24-48 hours.
+                            Thanks for reaching out! We've received your message and our team will get back to you within 24 hours.
                         </p>
                         <a 
                             href="/" 
