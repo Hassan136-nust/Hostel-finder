@@ -155,7 +155,7 @@ const ProfilePage = () => {
   const handleUpdatePhone = async (phone: string) => {
     try {
       await updateUserInfo({ phone }).unwrap();
-      toast.success("Phone number updated successfully");
+      toast.success("Phone number updated successfully!!");
       setEditPhoneOpen(false);
     } catch (error: any) {
       toast.error(error?.data?.message || "Failed to update phone");
