@@ -54,7 +54,7 @@ const AboutPage = () => {
                             </div>
                             <h2 className="text-2xl font-bold text-[#2c1b13] dark:text-[#fcf2e9] mb-4">The Problem</h2>
                             <p className="text-[#2c1b13]/70 dark:text-[#fcf2e9]/60 leading-relaxed">
-                                Finding a decent hostel is exhausted. Students often face fake listings, hidden charges, unhygienic conditions, and insecure environments. The process is manual, tiring, and lacks transparency.
+                                Finding a hostel is exhausted. Students often face fake listings, hidden charges, unhygienic conditions, and insecure environments. The process is manual, tiring, and lacks transparency.
                             </p>
                         </motion.div>
 
